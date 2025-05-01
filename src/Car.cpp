@@ -15,8 +15,12 @@ void Car::turnRight() {
     dir = static_cast<Direction>((dir + 1) % 4);
 }
 
-bool Car::checkCollision(const Map& map, int nx, int ny) {
-    return map.getTile(nx, ny) == WALL;
+bool Car::checkCollision(const Map& map, int nextX, int nextY) {
+    char tile = map.getTile(nextX, nextY);
+    if (tile == '#') {
+        return true;  // Wall collision
+    }
+    return false;
 }
 
 UpdateStatus Car::update(const Map& map) {
@@ -27,8 +31,8 @@ UpdateStatus Car::update(const Map& map) {
         case DOWN:  ny += velocity; break;
         case LEFT:  nx -= velocity; break;
     }
-
     if (checkCollision(map, nx, ny)) {
+        std::cout<<"collision detected\n";
         velocity = 0;
         return UpdateStatus::COLLISION;
     }

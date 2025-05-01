@@ -3,9 +3,10 @@
 
 int main() {
     
-    Game game;
+    
     MapEditor editor(80, 80, 10);
     editor.run();
+    Game game;
     game.run();
     return 0;
 }

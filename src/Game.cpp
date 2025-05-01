@@ -5,7 +5,7 @@
 
 Game::Game() : car(-1, -1), gameOver(false) {
     std::cout << "Loading track...\n";
-    if (!track.loadFromFile("assets/track1.txt")) {
+    if (!track.loadFromFile("/Users/matteomugnai/Desktop/RL/assets/track.txt")) {
         std::cerr << "Failed to load track.\n";
         return;
     }
@@ -32,7 +32,7 @@ void Game::processInput(char input) {
 }
 
 void Game::render() {
-    track.display();
+    track.display(car.getX(), car.getY());
     std::cout << "Car at: (" << car.getX() << ", " << car.getY() << ")\n";
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Map.h"
 #include "Utils.h"
+#include<iostream>
 
 enum class UpdateStatus { OK, COLLISION, GOAL };
 

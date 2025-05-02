@@ -1,6 +1,7 @@
 #pragma once
 #include "Map.h"
 #include "Car.h"
+#include <fstream>
 
 class Game {
 public:
@@ -13,4 +14,5 @@ private:
     void processInput(char input);
     void render();
     bool gameOver;
+    std::ofstream movementFile;
 };

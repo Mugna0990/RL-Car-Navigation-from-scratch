@@ -1,10 +1,10 @@
 #include "Car.h"
 #include "Utils.h"
 
-Car::Car(int startX, int startY) : x(startX), y(startY), velocity(0), dir(UP) {}
+Car::Car(int startX, int startY) : x(startX), y(startY), velocity(1), dir(UP) {}
 
 void Car::accelerate() {
-    velocity = std::min(velocity + 1, 2); // Max speed 2
+    velocity = std::min(velocity + 1, 5); // Max speed 5
 }
 
 void Car::turnLeft() {

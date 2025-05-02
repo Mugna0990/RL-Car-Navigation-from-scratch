@@ -17,7 +17,7 @@ CXXFLAGS += -I$(SFML_HOME)/include
 LDFLAGS = -L$(SFML_HOME)/lib -lsfml-graphics -lsfml-window -lsfml-system
 
 # Source files - Make sure ALL your .cpp files are listed here
-SRC = src/main.cpp src/MapEditor.cpp src/Game.cpp src/Car.cpp src/Map.cpp
+SRC = src/main.cpp src/MapEditor.cpp src/Game.cpp src/Car.cpp src/Map.cpp src/DisplayMovement.cpp
 
 # Object files corresponding to source files
 OBJ = $(SRC:.cpp=.o)

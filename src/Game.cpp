@@ -1,7 +1,9 @@
 #include "Game.h"
+#include "DisplayMovement.h"
 #include <iostream>
 #include <chrono>
 #include <thread>
+
 
 Game::Game() : car(-1, -1), gameOver(false) {
     std::cout << "Loading track...\n";
@@ -18,6 +20,15 @@ Game::Game() : car(-1, -1), gameOver(false) {
     } else {
         std::cerr << "Start position 'S' not found on map.\n";
     }
+    movementFile.open("/Users/matteomugnai/Desktop/RL/assets/movements.txt");
+    if (!movementFile.is_open()) {
+        std::cerr << "Failed to open movement file: " << "/Users/matteomugnai/Desktop/RL/assets/movements.txt" << std::endl;
+        // Handle error - maybe set a flag or set gameOver = true
+        // The render method should check if the file is open before writing
+    } else {
+        std::cout << "Movement file opened successfully: " << "/Users/matteomugnai/Desktop/RL/assets/movements.txt" << std::endl;
+        // Optionally write a header to the file
+    }
 }
 
 void Game::processInput(char input) {
@@ -32,8 +43,14 @@ void Game::processInput(char input) {
 }
 
 void Game::render() {
+    if (movementFile.is_open()) {
+        movementFile << car.getX() << " " << car.getY() << "\n";
+        movementFile.flush();
+    } 
+    
     track.display(car.getX(), car.getY());
     std::cout << "Car at: (" << car.getX() << ", " << car.getY() << ")\n";
+    
 }
 
 void Game::run() {
@@ -55,4 +72,12 @@ void Game::run() {
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+
+    if (movementFile.is_open()) {
+        movementFile.close();
+        std::cout << "Movement file closed.\n";
+    }
+
+    std::cout << "Game over. Displaying track and movement...\n";
+    displayTrackWithMovement("/Users/matteomugnai/Desktop/RL/assets/track.txt", "/Users/matteomugnai/Desktop/RL/assets/movements.txt");
 }

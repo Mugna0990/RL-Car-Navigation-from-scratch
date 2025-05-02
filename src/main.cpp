@@ -1,5 +1,5 @@
-#include "Game.h"
-#include "MapEditor.h"
+#include "./game/Game.h"
+#include "./UI/MapEditor.h"
 
 int main() {
     

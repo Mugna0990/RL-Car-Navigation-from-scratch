@@ -1,5 +1,5 @@
 #include "Car.h"
-#include "Utils.h"
+#include "../Utils.h"
 
 Car::Car(int startX, int startY) : x(startX), y(startY), velocity(1), dir(UP) {}
 

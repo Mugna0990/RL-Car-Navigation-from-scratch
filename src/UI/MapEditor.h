@@ -2,7 +2,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp> // Include for sf::RenderWindow and sf::Color/Vector2u/Vector2i/RectangleShape/Event etc.
 #include <string>
-#include "Utils.h" // Assuming TileType is defined here
+#include "../Utils.h"
 
 class MapEditor {
 public:

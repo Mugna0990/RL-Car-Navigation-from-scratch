@@ -5,5 +5,5 @@ const int MAP_HEIGHT = 80;
 
 enum Direction { UP, RIGHT, DOWN, LEFT };
 enum TileType { EMPTY, WALL, ROAD, START, GOAL };
-
+enum class UpdateStatus { OK, COLLISION, GOAL };
 

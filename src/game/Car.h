@@ -3,8 +3,6 @@
 #include "../Utils.h"
 #include<iostream>
 
-enum class UpdateStatus { OK, COLLISION, GOAL };
-
 class Car {
 public:
     Car(int startX, int startY);

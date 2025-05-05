@@ -18,6 +18,7 @@ public:
 
     // Apply gradients using the optimizer
     void update();
+    void resetGradients();
 
     // Save and load layer weights, biases, and optimizer state
     void save(const std::string& path) const;
@@ -30,7 +31,7 @@ private:
     int n_inputs;
     int n_outputs;
     int layer_idx;
-    bool type;
+    bool isOut;
 
     // Layer parameters
     std::vector<std::vector<double>> weights;

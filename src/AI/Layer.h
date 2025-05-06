@@ -18,14 +18,21 @@ public:
 
     // Apply gradients using the optimizer
     void update();
-    void resetGradients();
+    void reset();
 
     // Save and load layer weights, biases, and optimizer state
-    void save(const std::string& path) const;
+    void save(const std::string& path);
     void load(const std::string& path);
 
     // Set input for backpropagation
     void setInput(const std::vector<double>& input);
+
+    // New methods for backpropagation deltas
+    std::vector<double>& outputLayerNodeValues(double lossDerivative, int action);
+    std::vector<double>& hiddenLayerNodeValues(const Layer& nextLayer, const std::vector<double>& nextLayerNodeValues);
+
+    // Optimizer
+    AdamOptimizer optimizer;
 
 private:
     int n_inputs;
@@ -44,7 +51,4 @@ private:
     std::vector<double> input;
     std::vector<double> output;
     std::vector<double> node_values;
-
-    // Optimizer
-    AdamOptimizer optimizer;
 };

@@ -4,7 +4,7 @@
 int main() {
     
     
-    MapEditor editor(80, 80, 10);
+    MapEditor editor(120, 120, 5);
     editor.run();
     Game game;
     game.run();

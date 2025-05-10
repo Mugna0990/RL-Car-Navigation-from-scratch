@@ -51,10 +51,10 @@ void Map::display(int xC, int yC) const {
     }
 }
 
-bool Map::findStart(int& startX, int& startY) const {
+bool Map::find(char c, int& startX, int& startY) const {
     for (int y = 0; y < getHeight(); y++) {
         for (int x = 0; x < getWidth(); x++) {
-            if (grid[y][x] == 'S') {
+            if (grid[y][x] == c) {
                 startX = x;
                 startY = y;
                 return true;

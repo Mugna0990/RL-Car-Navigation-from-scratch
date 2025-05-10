@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "../Utils.h"
 #include<iostream>
+#include <fstream>
 
 class Car {
 public:
@@ -19,6 +20,7 @@ public:
     int getX() const;
     int getY() const;
     char getDirectionChar() const;
+    int minDotsToGoal(const Map& map);
 
 private:
     int x, y;

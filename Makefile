@@ -1,39 +1,42 @@
-# Makefile
-
 # Define the compiler
 CXX = g++
 
 # Options for compilation
 CXXFLAGS = -std=c++17 -Wall -Wextra
 
-# Define the path to your SFML installation via Homebrew
+# SFML path via Homebrew
 SFML_HOME = /opt/homebrew/opt/sfml
 
-# Add the include path for SFML headers
+# SFML includes and libs
 CXXFLAGS += -I$(SFML_HOME)/include
-
-# Add the library path and the SFML libraries to link
-# Ensure you link all necessary SFML modules (graphics, window, system are common)
 LDFLAGS = -L$(SFML_HOME)/lib -lsfml-graphics -lsfml-window -lsfml-system
 
-# Source files - Make sure ALL your .cpp files are listed here
-SRC = src/main.cpp src/MapEditor.cpp src/Game.cpp src/Car.cpp src/Map.cpp src/DisplayMovement.cpp
+# Common source files
+SRC_COMMON = src/Game.cpp src/Car.cpp src/Map.cpp src/DisplayMovement.cpp
 
-# Object files corresponding to source files
-OBJ = $(SRC:.cpp=.o)
+# Main editor target
+SRC_EDITOR = src/main.cpp src/MapEditor.cpp $(SRC_COMMON)
+OBJ_EDITOR = $(SRC_EDITOR:.cpp=.o)
 
-# Default target: build the editor executable
+# Game-only target
+SRC_GAME = src/game_main.cpp $(SRC_COMMON)
+OBJ_GAME = $(SRC_GAME:.cpp=.o)
+
+# Default target
 all: editor
 
-# Rule to build the executable from object files
-editor: $(OBJ)
-	$(CXX) $(OBJ) -o editor $(LDFLAGS)
+# Editor build
+editor: $(OBJ_EDITOR)
+	$(CXX) $(OBJ_EDITOR) -o editor $(LDFLAGS)
 
-# Generic rule to compile .cpp files into .o files
-# This uses the CXX and CXXFLAGS defined above
+# Game-only build
+game: $(OBJ_GAME)
+	$(CXX) $(OBJ_GAME) -o game $(LDFLAGS)
+
+# Compile rule
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Rule to clean generated files
+# Clean
 clean:
-	rm -f $(OBJ) editor
+	rm -f $(OBJ_EDITOR) $(OBJ_GAME) editor game

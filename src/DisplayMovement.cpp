@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-const int TILE_SIZE = 7; // Adjust as needed
+const int TILE_SIZE = 3; // Adjust as needed
 
 // Function to load the track from a file
 std::vector<std::string> loadTrack(const std::string& filePath, int& width, int& height) {
@@ -99,7 +99,7 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
                     case '#': tileColor = sf::Color(100, 100, 100); break; // Wall (Dark Grey)
                     case '.': tileColor = sf::Color(50, 50, 50); break;   // Path (Grey)
                     case 'S': tileColor = sf::Color::Green; break;      // Start (Green)
-                    case 'G': tileColor = sf::Color::Red; break;        // Goal (Red)
+                    case 'G': tileColor = sf::Color::Blue; break;        // Goal (Red)
                     default:  tileColor = sf::Color::Black; break;      // Empty/Unknown (Black)
                 }
 
@@ -111,7 +111,7 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
 
         // Draw the movement path (blue points)
         sf::CircleShape movementPoint(TILE_SIZE / 1.5f); // Smaller circle for the point
-        movementPoint.setFillColor(sf::Color::Blue);     // Blue color for movement
+        movementPoint.setFillColor(sf::Color::Red);     // Blue color for movement
         static int startDelayCounter = 0;
         // Adjust the number of frames for the delay (e.g., 60 frames/sec * 2 sec = 120 frames)
         const int startDelayFrames = 60 * 2; 
@@ -122,11 +122,11 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
             // --- Place the existing code for drawing the single blue square here ---
             // Draw the movement path (blue points)
             sf::CircleShape movementPoint(TILE_SIZE / 1.5f); // Smaller circle for the point
-            movementPoint.setFillColor(sf::Color::Blue);     // Blue color for movement
+            movementPoint.setFillColor(sf::Color::Red);     // Blue color for movement
 
             static int currentMovementIndex = 0;
             static int frameCounter = 0;
-            const int framesPerStep = 8; // Adjust to control speed
+            const int framesPerStep = 1; // Adjust to control speed
 
             if (!movement.empty()) {
                 // Calculate position in pixels, centering the circle in the cell

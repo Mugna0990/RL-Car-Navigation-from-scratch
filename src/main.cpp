@@ -1,10 +1,11 @@
 #include "Game.h"
 #include "MapEditor.h"
+#include "util.h"
 
 int main() {
     
     
-    MapEditor editor(120, 120, 5);
+    MapEditor editor(MAP_WIDTH, MAP_HEIGHT, 3);
     editor.run();
     Game game;
     game.run();

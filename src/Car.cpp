@@ -59,12 +59,43 @@ void Car::decelerate() {
     velocity = std::max(velocity - 1, 0);
 }
 
-char Car::getDirectionChar() const {
-    switch (dir) {
-        case UP: return '^';
-        case RIGHT: return '>';
-        case DOWN: return 'v';
-        case LEFT: return '<';
+int Car::minDotsToGoal(const Map& map) {
+    const int rows = MAP_HEIGHT, cols = MAP_WIDTH;
+    int gX = -1, gY = -1;
+
+    // Try to find 'G'
+    map.find('G', gX, gY);
+    std::pair<int, int> goal = {gY, gX};  // row = y, col = x
+    std::queue<std::tuple<int, int, int>> q;  // row, col, dot count
+    std::vector<std::vector<bool>> visited(rows, std::vector<bool>(cols, false));
+    q.push({y, x, 0});
+    visited[y][x] = true;
+
+    int dr[] = {-1, 1, 0, 0};  // N, S
+    int dc[] = {0, 0, -1, 1};  // W, E
+
+    while (!q.empty()) {
+        auto [r, c, dots] = q.front(); q.pop();
+
+        if (r == goal.first && c == goal.second) {
+            std::cout << "Reached goal at (" << r << "," << c << ") with " << dots << " dots.\n";
+            return dots;
+        }
+
+        for (int d = 0; d < 4; ++d) {
+            int nr = r + dr[d];
+            int nc = c + dc[d];
+
+            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !visited[nr][nc]) {
+                char tile = map.getTile(nc, nr);  // Remember: x = col, y = row
+                if (tile == '.' || tile == 'G') {
+                    visited[nr][nc] = true;
+                    int newDots = dots + (tile == '.' ? 1 : 0);
+                    q.push({nr, nc, newDots});
+                }
+            }
+        }
     }
-    return '?';
+
+    return -1;
 }

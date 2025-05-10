@@ -14,7 +14,7 @@ Game::Game() : car(-1, -1), gameOver(false) {
     std::cout << "Track loaded successfully.\n";
 
     int startX = -99, startY = -99;
-    if (track.findStart(startX, startY)) {
+    if (track.find('S', startX, startY)) {
         std::cout << "Found start at: (" << startX << ", " << startY << ")\n";
         car = Car(startX, startY);
     } else {
@@ -60,7 +60,8 @@ void Game::run() {
         char input;
         std::cin >> input;
         processInput(input);
-
+        int dist = car.minDotsToGoal(track);
+        std::cout<<"current distance is"<<dist<<std::endl;
         UpdateStatus status = car.update(track);
         if (status == UpdateStatus::GOAL) {
             std::cout << "🏁 You reached the goal!\n";

@@ -34,12 +34,6 @@ public:
     // Optimizer
     AdamOptimizer optimizer;
 
-private:
-    int n_inputs;
-    int n_outputs;
-    int layer_idx;
-    bool isOut;
-
     // Layer parameters
     std::vector<std::vector<double>> weights;
     std::vector<double> biases;
@@ -47,6 +41,12 @@ private:
     // Gradients
     std::vector<std::vector<double>> grad_weights;
     std::vector<double> grad_biases;
+
+private:
+    int n_inputs;
+    int n_outputs;
+    int layer_idx;
+    bool isOut;
 
     std::vector<double> input;
     std::vector<double> output;

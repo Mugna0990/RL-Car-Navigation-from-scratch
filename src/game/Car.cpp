@@ -59,12 +59,3 @@ void Car::decelerate() {
     velocity = std::max(velocity - 1, 0);
 }
 
-char Car::getDirectionChar() const {
-    switch (dir) {
-        case UP: return '^';
-        case RIGHT: return '>';
-        case DOWN: return 'v';
-        case LEFT: return '<';
-    }
-    return '?';
-}

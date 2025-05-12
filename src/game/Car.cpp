@@ -23,6 +23,14 @@ bool Car::checkCollision(const Map& map, int nextX, int nextY) {
     return false;
 }
 
+int Car::getVelocity() {
+    return this->velocity;
+}
+
+Direction Car::getDirection() {
+    return this->dir;
+}
+
 UpdateStatus Car::update(const Map& map) {
     int nx = x, ny = y;
     switch (dir) {

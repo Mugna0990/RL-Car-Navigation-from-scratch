@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/**",
-                "/opt/homebrew/opt/sfml/include"
+                "/opt/homebrew/opt/sfml/include",
+                "${workspaceFolder}/src/AI"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

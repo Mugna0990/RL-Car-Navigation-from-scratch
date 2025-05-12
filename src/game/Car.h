@@ -22,6 +22,9 @@ public:
     char getDirectionChar() const;
     int minDotsToGoal(const Map& map);
 
+    int getVelocity();
+    Direction getDirection();
+
 private:
     int x, y;
     int velocity;

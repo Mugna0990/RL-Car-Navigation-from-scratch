@@ -7,9 +7,6 @@
 #include <sstream> // For std::istringstream
 #include <numeric> // For std::fill (though resize with value is often used)
 
-// Assuming types.h contains necessary type definitions if any.
-// If not, you might not need this include.
-// #include "types.h"
 
 class AdamOptimizer {
 public:

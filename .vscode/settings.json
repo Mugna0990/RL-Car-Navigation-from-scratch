@@ -55,6 +55,8 @@
         "variant": "cpp",
         "vector": "cpp",
         "algorithm": "cpp",
-        "*.ds_store": "cpp"
+        "*.ds_store": "cpp",
+        "iterator": "cpp",
+        "utility": "cpp"
     }
 }

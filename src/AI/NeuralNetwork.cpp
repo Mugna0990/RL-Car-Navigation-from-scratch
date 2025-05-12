@@ -9,7 +9,7 @@ NeuralNetwork::NeuralNetwork(std::vector<int> layerSizes, double eps, double lr,
 
     for(size_t i = 0; i < layerSizes.size() - 1; ++i) {
         int layer_type = (i == layerSizes.size() - 2) ? 1 : 0;
-        layers.push_back(Layer(layerSizes[i], layerSizes[i+1], layer_type, i));
+        layers.push_back(Layer(layerSizes[i], layerSizes[i+1], i, layer_type));
     }
     
     load(path);
@@ -40,6 +40,14 @@ void NeuralNetwork::load(const std::string& path) {
     std::cout << "Network loaded." << std::endl;
 }
 
+std::vector<double> NeuralNetwork::forward(const std::vector<double>& input) {
+    std::vector<double> current_output = input; // Start with the network's input
+    for (auto& layer : layers) {
+        current_output = layer.forward(current_output); // Pass output of current layer as input to the next
+    }
+    return current_output; // Return the final output from the last layer
+}
+
 void NeuralNetwork::learn(const std::vector<std::tuple<ReplayRecord, double>>& batch) {
     // 1. Reset gradients for the batch (Correct, now that Layer::reset() is fixed)
     for(auto& layer : layers) {
@@ -56,7 +64,7 @@ void NeuralNetwork::learn(const std::vector<std::tuple<ReplayRecord, double>>& b
         Action action_taken = record.action;
 
         // 2. Forward pass to get current Q-value predictions for the state
-        std::vector<double> predicted_q_values = forward(input_state.toVector());
+        std::vector<double> predicted_q_values = NeuralNetwork::forward(input_state.toVector());
 
         size_t action_idx = static_cast<size_t>(action_taken);
         if (action_idx >= predicted_q_values.size()) {
@@ -73,7 +81,7 @@ void NeuralNetwork::learn(const std::vector<std::tuple<ReplayRecord, double>>& b
         std::vector<double> error_signals_to_propagate = layers.back().outputLayerNodeValues(lossDerivative, action_idx);
 
         // Propagate the error backwards through the hidden layers
-        for (int layerIdx = layers.size() - 2; layerIdx >= 0; --layerIdx) {
+        for (int layerIdx = static_cast<int>(layers.size()) - 2; layerIdx >= 0; --layerIdx) {
              error_signals_to_propagate = layers[layerIdx].hiddenLayerNodeValues(layers[layerIdx+1], error_signals_to_propagate);
         }
     } // End of batch loop
@@ -81,20 +89,5 @@ void NeuralNetwork::learn(const std::vector<std::tuple<ReplayRecord, double>>& b
     // 5. Apply the accumulated gradients using the optimizer (ONLY ONCE PER BATCH)
     for(auto& layer : layers) {
         layer.update(); // This call is correct here. It applies optimizer and clears gradients.
-    }
-
-    // 6. Log the average loss
-    if (!batch.empty()) {
-        double avgLoss = totalLoss / batch.size();
-        std::cout << "\nAvg loss: " << avgLoss << "\n";
-
-        std::ofstream outFile("training_loss.txt", std::ios::app);
-        if (outFile.is_open()) {
-            outFile << avgLoss << std::endl;
-        } else {
-            std::cerr << "Warning: Unable to open training_loss.txt for logging." << std::endl;
-        }
-    } else {
-         std::cout << "\nAttempted to learn with an empty batch.\n";
     }
 }

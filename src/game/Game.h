@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "Car.h"
 #include "util.h"
+#include "../UI/DisplayMovement.h"
 #include <queue>
 #include <fstream>
 #include <string>
@@ -11,9 +12,9 @@ public:
     Game();
     void run();
     void processInput(char input);
+    Map track;
 
 private:
-    Map track;
     Car car;
     void render();
     bool gameOver;

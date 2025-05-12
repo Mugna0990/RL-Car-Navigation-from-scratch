@@ -129,10 +129,10 @@ void Layer::load(const std::string& path) {
 
 
 void Layer::reset() {
-    for(int i = 0; i < n_inputs; i++) {
-        std::fill(weights[i].begin(), weights[i].end(), 0);
+    for (auto& row : grad_weights) {
+        std::fill(row.begin(), row.end(), 0.0);
     }
-    std::fill(biases.begin(), biases.end(), 0);
+    std::fill(grad_biases.begin(), grad_biases.end(), 0.0);
 }
 
 std::vector<double> Layer::backward(const std::vector<double>& dLoss_dOutput) {
@@ -172,6 +172,14 @@ std::vector<double>& Layer::outputLayerNodeValues(double lossDerivative, int act
     std::fill(node_values.begin(), node_values.end(), 0.0);
     if (action >= 0 && action < node_values.size()) {
         node_values[action] = lossDerivative;
+
+        grad_biases[action] += node_values[action]; 
+        
+        for (int i = 0; i < n_inputs; ++i) {
+            grad_weights[i][action] += input[i] * node_values[action];
+        }
+
+
     } else {
         std::cerr << "Warning: Invalid action index in outputLayerNodeValues: " << action << std::endl;
     }
@@ -187,10 +195,21 @@ std::vector<double>& Layer::hiddenLayerNodeValues(const Layer& nextLayer, const 
     for (int i = 0; i < n_outputs; ++i) {
         double sum = 0.0;
         for (int j = 0; j < nextLayer.n_outputs; ++j) {
+            // Error propagated from the next layer multiplied by connection weight
             sum += nextLayer.weights[i][j] * nextLayerNodeValues[j];
         }
-        node_values[i] = sum * activationDerivatives[i];
+        node_values[i] = sum * activationDerivatives[i]; // Apply activation derivative
     }
+
+    for (int i = 0; i < n_outputs; ++i) { // Iterate over neurons in the current layer (output side of this layer)
+        grad_biases[i] += node_values[i]; // Accumulate bias gradient
+
+        for (int j = 0; j < n_inputs; ++j) { // Iterate over inputs to this layer
+            // Accumulate weight gradient: input_to_this_neuron * error_signal_for_this_neuron
+            grad_weights[j][i] += input[j] * node_values[i];
+        }
+    }
+    // **ADDITION END**
 
     return node_values;
 }

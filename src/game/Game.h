@@ -10,11 +10,11 @@ class Game {
 public:
     Game();
     void run();
+    void processInput(char input);
 
 private:
     Map track;
     Car car;
-    void processInput(char input);
     void render();
     bool gameOver;
     std::ofstream movementFile;

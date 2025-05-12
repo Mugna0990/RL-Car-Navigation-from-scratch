@@ -1,47 +1,68 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include "../Utils.h"
+
+enum class Action {
+    ACCELERATE = 0,
+    DECELERATE = 1,
+    LEFT  = 2,
+    RIGHT = 3,
+    UP = 4,
+    DOWN = 5
+};
 
 class State {
 public:
-    int x; // X position on the road/grid
-    int y; // Y position on the road/grid
-    int direction; // 0: Up (North), 1: Right (East), 2: Down (South), 3: Left (West)
-    int speed;     // 1–5
+    int x; // Position X
+    int y; // Position Y
+    Direction direction; // 0-3
+    int speed; // 1–5
 
     // Constructor
-    State(int x, int y, int dir, int spd)
+    State(int x, int y, Direction dir, int spd)
         : x(x), y(y), direction(dir), speed(spd) {}
 
     // Converts the state to a normalized vector for neural network input
-    std::vector<double> toVector(int maxX, int maxY) const {
-        // Normalize position (assuming x ranges from 0 to maxX-1, y from 0 to maxY-1)
-        double normX = static_cast<double>(x) / maxX;
-        double normY = static_cast<double>(y) / maxY;
-
-        // Normalize direction (0-3 mapped to 0-1)
-        // Dividing by 3.0 maps 0->0, 1->1/3, 2->2/3, 3->1
-        double normDirection = static_cast<double>(direction) / 3.0;
-
-        // Normalize speed (1-5 mapped to 0-1)
-        // Speed 1 maps to 0, Speed 5 maps to 1
+    std::vector<double> toVector() const {
+        double normX = static_cast<double>(x) / MAP_WIDTH;
+        double normY = static_cast<double>(y) / MAP_HEIGHT;
+        double normDirection = static_cast<double>(static_cast<int>(direction)) / 3.0;
         double normSpeed = static_cast<double>(speed - 1) / 4.0;
-
         return {normX, normY, normDirection, normSpeed};
     }
 
-    // Prints the state to the console
+    // Factory method to construct from a vector
+    static State fromVector(const std::vector<double>& vec, int maxX, int maxY) {
+        if (vec.size() != 4) throw std::invalid_argument("State vector must have 4 elements.");
+        int x = static_cast<int>(vec[0] * maxX);
+        int y = static_cast<int>(vec[1] * maxY);
+        Direction dir = static_cast<Direction>(static_cast<int>(vec[2] * 3.0 + 0.5)); // round to nearest
+        int speed = static_cast<int>(vec[3] * 4.0 + 1.0);
+        return State(x, y, dir, speed);
+    }
+
     void print() const {
         std::cout << "State(x=" << x << ", y=" << y
-                  << ", direction=" << direction
+                  << ", direction=" << static_cast<int>(direction)
                   << ", speed=" << speed << ")\n";
     }
 
-    // Checks if the state is within valid bounds
     bool isValid(int maxX, int maxY) const {
         return (x >= 0 && x < maxX &&
                 y >= 0 && y < maxY &&
-                direction >= 0 && direction <= 3 && // Updated to check for 0-3
+                static_cast<int>(direction) >= 0 && static_cast<int>(direction) <= 3 &&
                 speed >= 1 && speed <= 5);
     }
+};
+
+struct ReplayRecord {
+    State state;
+    Action action;
+    double reward;
+    State next_state;
+    bool done;
+
+    ReplayRecord(State s, Action a, double r, State ns, bool d)
+        : state(s), action(a), reward(r), next_state(ns), done(d) {}
 };

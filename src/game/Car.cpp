@@ -64,7 +64,7 @@ void Car::setDirection(Direction newDir) {
 }
 
 void Car::decelerate() {
-    velocity = std::max(velocity - 1, 0);
+    velocity = std::max(velocity - 1, 1);
 }
 
 int Car::minDotsToGoal(const Map& map) {
@@ -73,7 +73,7 @@ int Car::minDotsToGoal(const Map& map) {
 
     // Try to find 'G'
     map.find('G', gX, gY);
-    std::pair<int, int> goal = {gY, gX};  // row = y, col = x
+    std::pair<int, int> goal = {gY, gX}; // row = y, col = x
     std::queue<std::tuple<int, int, int>> q;  // row, col, dot count
     std::vector<std::vector<bool>> visited(rows, std::vector<bool>(cols, false));
     q.push({y, x, 0});
@@ -85,8 +85,7 @@ int Car::minDotsToGoal(const Map& map) {
     while (!q.empty()) {
         auto [r, c, dots] = q.front(); q.pop();
 
-        if (r == goal.first && c == goal.second) {
-            std::cout << "Reached goal at (" << r << "," << c << ") with " << dots << " dots.\n";
+        if (r == goal.first && c == goal.second){
             return dots;
         }
 

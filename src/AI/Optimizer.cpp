@@ -11,18 +11,16 @@ AdamOptimizer::AdamOptimizer()
 
 // Parameterized constructor implementation
 AdamOptimizer::AdamOptimizer(int num_input, int num_output, double b1, double b2, double eps, double learning_r, int layer_id)
-    : input_features(num_input), output_features(num_output), beta_one(b1), beta_two(b2), epsilon_stable(eps), alpha(learning_r),
-      training_steps(0), beta_one_power(1.0), beta_two_power(1.0), layer_identifier(layer_id)
+    : alpha(learning_r), beta_one(b1), beta_two(b2), epsilon_stable(eps),
+      training_steps(0), beta_one_power(1.0), beta_two_power(1.0),
+      input_features(num_input), output_features(num_output), layer_identifier(layer_id)
 {
-    // Initialize moment vectors with zeros
-    weight_first_moment.resize(input_features, std::vector<double>(output_features, 0.0));
-    weight_second_moment.resize(input_features, std::vector<double>(output_features, 0.0));
-    bias_first_moment.resize(output_features, 0.0);
-    bias_second_moment.resize(output_features, 0.0);
-
-    // Note: bias correction terms beta_one_power and beta_two_power are initialized to 1.0
-    // and updated in the apply_gradients step based on the incremented training_steps.
+    weight_first_moment.assign(input_features, std::vector<double>(output_features, 0.0));
+    weight_second_moment.assign(input_features, std::vector<double>(output_features, 0.0));
+    bias_first_moment.assign(output_features, 0.0);
+    bias_second_moment.assign(output_features, 0.0);
 }
+
 
 // Perform one optimization step implementation
 void AdamOptimizer::optimize(std::vector<std::vector<double>>& layer_weights, std::vector<double>& layer_biases,
@@ -141,7 +139,8 @@ void AdamOptimizer::load(const std::string& file_path) {
     // Resize moment vectors based on loaded dimensions if not already set (e.g., using default constructor)
     // If using the parameterized constructor, dimensions are already set, so this might not be strictly needed,
     // but it adds robustness if loading into a default-constructed object.
-    if (weight_first_moment.empty() || weight_first_moment.size() != input_features || (input_features > 0 && weight_first_moment[0].size() != output_features)) {
+    if (weight_first_moment.empty() || weight_first_moment.size() != static_cast<size_t>(input_features) ||
+    (input_features > 0 && weight_first_moment[0].size() != static_cast<size_t>(output_features))){ 
          weight_first_moment.resize(input_features, std::vector<double>(output_features));
          weight_second_moment.resize(input_features, std::vector<double>(output_features));
          bias_first_moment.resize(output_features);

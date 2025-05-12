@@ -14,7 +14,7 @@ Layer::Layer(int n_in, int n_out, int idx, bool isOut) {
 
     node_values.resize(n_outputs);
 
-    optimizer = AdamOptimizer(n_inputs, n_outputs, 0.9, 0.999, 1e-8, 0, layer_idx);
+    optimizer = AdamOptimizer(n_inputs, n_outputs, 0.9, 0.999, 1e-8, 0.001, layer_idx);
 
     //He weight initialization
     std::random_device rd;
@@ -37,8 +37,8 @@ std::vector<double> Layer::forward(const std::vector<double>& in) {
     input = in;
     std::fill(output.begin(), output.end(), 0.0);
 
-    for(int i = 0; i < input.size(); i++) {
-        for(int j = 0; j < output.size(); j++) {
+    for(int i = 0; i < static_cast<int>(input.size()); i++) {
+        for(int j = 0; j < static_cast<int>(output.size()); j++) {
             output[j] += input[i] * weights[i][j];   
         }
     }
@@ -170,7 +170,7 @@ void Layer::setInput(const std::vector<double>& in) {
 
 std::vector<double>& Layer::outputLayerNodeValues(double lossDerivative, int action) {
     std::fill(node_values.begin(), node_values.end(), 0.0);
-    if (action >= 0 && action < node_values.size()) {
+    if (action >= 0 && action < static_cast<int>(node_values.size())) {
         node_values[action] = lossDerivative;
 
         grad_biases[action] += node_values[action]; 

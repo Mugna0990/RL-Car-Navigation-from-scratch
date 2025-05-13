@@ -7,40 +7,37 @@
 
 class Layer {
 public:
-    // Constructor
-    Layer(int n_inputs, int n_outputs, int layer_idx, bool type);
+    // Constructors
+    Layer(int n_inputs, int n_outputs, int layer_idx, bool is_output);
+    Layer(const Layer& other);                      // Copy constructor
+    Layer& operator=(const Layer& other);           // Copy assignment
+    Layer clone() const;                            // Clone method
 
-    // Forward pass
+    // Forward and backward passes
     std::vector<double> forward(const std::vector<double>& input);
-
-    // Backward pass (returns gradients to propagate to previous layer)
     std::vector<double> backward(const std::vector<double>& dLoss_dOutput);
 
-    // Apply gradients using the optimizer
-    void update();
-    void reset();
-
-    // Save and load layer weights, biases, and optimizer state
-    void save(const std::string& path);
-    void load(const std::string& path);
-
-    // Set input for backpropagation
+    // Backpropagation helper methods
     void setInput(const std::vector<double>& input);
-
-    // New methods for backpropagation deltas
     std::vector<double>& outputLayerNodeValues(double lossDerivative, int action);
     std::vector<double>& hiddenLayerNodeValues(const Layer& nextLayer, const std::vector<double>& nextLayerNodeValues);
 
-    // Optimizer
-    AdamOptimizer optimizer;
+    // Update methods
+    void update();
+    void reset();
 
-    // Layer parameters
+    // Save/load
+    void save(const std::string& path);
+    void load(const std::string& path);
+
+    // Parameters and gradients
     std::vector<std::vector<double>> weights;
     std::vector<double> biases;
-
-    // Gradients
     std::vector<std::vector<double>> grad_weights;
     std::vector<double> grad_biases;
+
+    // Optimizer
+    AdamOptimizer optimizer;
 
 private:
     int n_inputs;

@@ -42,6 +42,13 @@ all: rl_trainer
 editor: $(OBJ_EDITOR)
 	$(CXX) $^ -o $@ $(LDFLAGS)
 
+SRC_VISUALIZER := src/visualize.cpp
+OBJ_VISUALIZER := $(SRC_VISUALIZER:.cpp=.o)
+
+visualizer: $(OBJ_VISUALIZER) src/UI/DisplayMovement.o
+	$(CXX) $^ -o $@ $(LDFLAGS)
+
+
 # Build the RL trainer executable
 rl_trainer: $(OBJ_RL_TRAINER)
 	$(CXX) $^ -o $@ $(LDFLAGS)

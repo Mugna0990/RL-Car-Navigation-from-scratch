@@ -16,6 +16,32 @@ NeuralNetwork::NeuralNetwork(std::vector<int> layerSizes, double eps, double lr,
 
 }
 
+NeuralNetwork::NeuralNetwork(const NeuralNetwork& other)
+    : learnRate(other.learnRate),
+      epsilon(other.epsilon),
+      path(other.path)
+{
+    layers.clear();
+    for (const Layer& layer : other.layers) {
+        layers.push_back(layer); // calls Layer copy constructor
+    }
+}
+
+NeuralNetwork& NeuralNetwork::operator=(const NeuralNetwork& other) {
+    if (this != &other) {
+        learnRate = other.learnRate;
+        epsilon = other.epsilon;
+        path = other.path;
+
+        layers.clear();
+        for (const Layer& layer : other.layers) {
+            layers.push_back(layer);
+        }
+    }
+    return *this;
+}
+
+
 void NeuralNetwork::save(const std::string& path){
 
     std::cout << "Saving network to directory: " << path << std::endl;
@@ -54,8 +80,6 @@ void NeuralNetwork::learn(const std::vector<std::tuple<ReplayRecord, double>>& b
         layer.reset();
     }
 
-    double totalLoss = 0.0;
-
     // Process each experience in the batch
     for(const auto& experience_tuple : batch) {
         const auto& record = std::get<0>(experience_tuple);
@@ -76,7 +100,6 @@ void NeuralNetwork::learn(const std::vector<std::tuple<ReplayRecord, double>>& b
         double lossDerivative = predicted_q_for_action - target_q_value;
 
         // Accumulate squared error for tracking total loss
-        totalLoss += 0.5 * lossDerivative * lossDerivative;
 
         std::vector<double> error_signals_to_propagate = layers.back().outputLayerNodeValues(lossDerivative, action_idx);
 

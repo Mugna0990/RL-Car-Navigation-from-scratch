@@ -19,11 +19,9 @@ public:
     Direction direction; // 0-3
     int speed; // 1–5
 
-    // Constructor
     State(int x, int y, Direction dir, int spd)
         : x(x), y(y), direction(dir), speed(spd) {}
 
-    // Converts the state to a normalized vector for neural network input
     std::vector<double> toVector() const {
         double normX = static_cast<double>(x) / MAP_WIDTH;
         double normY = static_cast<double>(y) / MAP_HEIGHT;
@@ -32,7 +30,6 @@ public:
         return {normX, normY, normDirection, normSpeed};
     }
 
-    // Factory method to construct from a vector
     static State fromVector(const std::vector<double>& vec, int maxX, int maxY) {
         if (vec.size() != 4) throw std::invalid_argument("State vector must have 4 elements.");
         int x = static_cast<int>(vec[0] * maxX);

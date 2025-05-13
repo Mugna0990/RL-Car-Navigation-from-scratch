@@ -22,11 +22,10 @@ AdamOptimizer::AdamOptimizer(int num_input, int num_output, double b1, double b2
 }
 
 
-// Perform one optimization step implementation
 void AdamOptimizer::optimize(std::vector<std::vector<double>>& layer_weights, std::vector<double>& layer_biases,
                                     const std::vector<std::vector<double>>& weight_gradients, const std::vector<double>& bias_gradients)
 {
-    training_steps++; // Increment the timestep
+    training_steps++; 
 
     // Update bias correction terms
     beta_one_power *= beta_one;

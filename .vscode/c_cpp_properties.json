@@ -6,7 +6,8 @@
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/**",
                 "/opt/homebrew/opt/sfml/include",
-                "${workspaceFolder}/src/AI"
+                "${workspaceFolder}/src/AI",
+                "${workspaceFolder}/src/game"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

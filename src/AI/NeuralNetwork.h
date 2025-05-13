@@ -6,6 +6,8 @@
 
 class NeuralNetwork {
     public:
+        NeuralNetwork(const NeuralNetwork& other); // Copy constructor
+        NeuralNetwork& operator=(const NeuralNetwork& other); // Copy assignment
         NeuralNetwork(std::vector<int> layerSizes, double eps, double lr, std::string p);
         std::vector<double> forward(const std::vector<double>& input) ;
         void backward(const std::vector<double>& expected_output);

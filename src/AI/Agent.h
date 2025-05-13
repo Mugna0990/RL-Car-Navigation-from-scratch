@@ -1,6 +1,7 @@
 #include "NeuralNetwork.h"
 #include "ReplayBuffer.h"
 #include <random>
+#include <string>
 #include <vector>
 #include <algorithm>
 
@@ -27,9 +28,10 @@ public:
           double decay,
           double min_eps,
           double discount_factor,
-          int num_actions )
-        : q_network(layerSizes, initial_epsilon, 0.001, "q_network_path"),
-          target_q_network(layerSizes, 0, 0, "target_q_network_path"),
+          int num_actions,
+          std::string path)
+        : q_network(layerSizes, initial_epsilon, 0.001, path + "/q_network"),
+          target_q_network(layerSizes, initial_epsilon, 0.001, path + "/target_q_network"),
           replay_buffer(buffer_capacity),
           epsilon(initial_epsilon),
           epsilon_decay(decay),
@@ -87,11 +89,7 @@ public:
             q_network.learn(training_batch);
         }
 
-        // Epsilon decay
-        if (epsilon > min_epsilon) {
-            epsilon *= epsilon_decay;
-            epsilon = std::max(min_epsilon, epsilon);
-        }
+        
     }
 
     void update_target_network() {

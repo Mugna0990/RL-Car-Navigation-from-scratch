@@ -36,10 +36,10 @@ public:
     
        // Normalize distances to walls to range [0, 1]
        // I do not want to divide for map dimension because it would cause to have always small values
-        double normDistU = std::min(0.99, static_cast<double>(distU) / 15);
-        double normDistR = std::min(0.99, static_cast<double>(distR) / 15);
-        double normDistD = std::min(0.99, static_cast<double>(distD) / 15);
-        double normDistL = std::min(0.99, static_cast<double>(distL) / 15);
+        double normDistU = std::min(1.00, static_cast<double>(distU) / 15);
+        double normDistR = std::min(1.00, static_cast<double>(distR) / 15);
+        double normDistD = std::min(1.00, static_cast<double>(distD) / 15);
+        double normDistL = std::min(1.00, static_cast<double>(distL) / 15);
     
         return {normX, normY, normDirection, normSpeed, normDistU, normDistR, normDistD, normDistL};
     }

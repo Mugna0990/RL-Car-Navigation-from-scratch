@@ -80,7 +80,7 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
     int maxSteps = prevDist * 2;
 
     int save_frequency = 1000;
-    int random_start_frequency = 2;
+    int random_start_frequency = 5;
     int display_movements_frequency = 35000;
     int save_movements_frequency = 500;
 

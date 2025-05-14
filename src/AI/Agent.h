@@ -30,7 +30,7 @@ public:
           double discount_factor,
           int num_actions,
           std::string path)
-        : q_network(layerSizes, initial_epsilon, 0.001, path + "/q_network"),
+        : q_network(layerSizes, initial_epsilon, 0.001, path + "/target_q_network"),
           target_q_network(layerSizes, initial_epsilon, 0.001, path + "/target_q_network"),
           replay_buffer(buffer_capacity),
           epsilon(initial_epsilon),
@@ -55,7 +55,6 @@ public:
         }
     }
 
-    // Store a transition
     void store_transition(const State& s, int a, double r, const State& s_prime, bool done) {
         Transition t = { s, a, r, s_prime, done };
         replay_buffer.add(t);

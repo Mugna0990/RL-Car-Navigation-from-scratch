@@ -2,8 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <fstream>
 #include <iostream>
-#include <optional> // Keep this include as your code uses std::optional
-#include <variant>  // Keep this include as your code uses sf::Event variants
+#include <optional> 
+#include <variant>  
 
 MapEditor::MapEditor(unsigned int w, unsigned int h, unsigned tSize)
     : width(w), height(h), tileSize(tSize),
@@ -13,11 +13,9 @@ MapEditor::MapEditor(unsigned int w, unsigned int h, unsigned tSize)
     // Set up legend text
     legendTexts.push_back("S: Set Start");
     legendTexts.push_back("G: Set Goal");
-    legendTexts.push_back("L: Set Road (3x3 brush)"); // Updated legend
-    legendTexts.push_back("Backspace: Clear Tile");
+    legendTexts.push_back("L: Set Road (5x5 square)");
     legendTexts.push_back("Enter: Save Map");
 
-    // Print legend to the terminal
     printLegend();
 }
 
@@ -73,12 +71,11 @@ void MapEditor::processEvents() {
 }
 
 void MapEditor::setTile(int x, int y, TileType type) {
-    // Lambda function to check if coordinates are within bounds
+
     auto isInBounds = [&](int ix, int iy) {
         return ix >= 0 && ix < static_cast<int>(width) && iy >= 0 && iy < static_cast<int>(height);
     };
 
-    // Only proceed if the initial click/mouse position is in bounds
     if (!isInBounds(x, y)) {
         return;
     }
@@ -86,9 +83,9 @@ void MapEditor::setTile(int x, int y, TileType type) {
     if (type == START) {
         // If a start is placed, remove the previous one if it exists
         if (startPlaced) {
-             // Ensure previous start position is in bounds before clearing
+
             if (isInBounds(startX, startY)) {
-                grid[startY][startX] = WALL; // User's current code uses WALL here
+                grid[startY][startX] = WALL;
             }
         }
         grid[y][x] = START;
@@ -99,9 +96,9 @@ void MapEditor::setTile(int x, int y, TileType type) {
     else if (type == GOAL) {
         // If a goal is placed, remove the previous one if it exists
         if (goalPlaced) {
-            // Ensure previous goal position is in bounds before clearing
+
              if (isInBounds(goalX, goalY)) {
-                grid[goalY][goalX] = EMPTY; // User's current code uses EMPTY here
+                grid[goalY][goalX] = WALL; 
              }
         }
         grid[y][x] = GOAL;
@@ -110,16 +107,14 @@ void MapEditor::setTile(int x, int y, TileType type) {
         goalPlaced = true;
     }
     else if (type == ROAD) {
-        // Draw a 3x3 area around the clicked tile, avoiding START/GOAL
+        // Draw a 5x5 area around the clicked tile, avoiding START/GOAL
         for (int dy = -2; dy <= 2; ++dy) {
             for (int dx = -2; dx <= 2; ++dx) {
         
                 int nx = x + dx;
                 int ny = y + dy;
 
-                // Check if the neighbor tile is within bounds
                 if (isInBounds(nx, ny)) {
-                    // Only set the tile to ROAD if it's not a START or GOAL
                     if (grid[ny][nx] != START && grid[ny][nx] != GOAL) {
                         grid[ny][nx] = ROAD;
                     }
@@ -127,11 +122,6 @@ void MapEditor::setTile(int x, int y, TileType type) {
             }
         }
     }
-    else if (type == EMPTY) {
-        // Backspace clears only the single tile
-        grid[y][x] = EMPTY;
-    }
-    // Note: WALL is the default and not set directly by a key press in the current logic.
 }
 
 void MapEditor::update() {}
@@ -140,7 +130,6 @@ void MapEditor::render() {
     window.clear(sf::Color::Black);
     sf::RectangleShape cell(sf::Vector2f(static_cast<float>(tileSize - 1), static_cast<float>(tileSize - 1)));
 
-    // Render the grid, casting height and width to int for loop bounds comparison
     for (int y = 0; y < static_cast<int>(height); ++y) {
         for (int x = 0; x < static_cast<int>(width); ++x) {
             switch (grid[y][x]) {
@@ -149,7 +138,7 @@ void MapEditor::render() {
                 case ROAD:  cell.setFillColor(sf::Color::White); break;
                 case START: cell.setFillColor(sf::Color::Green); break;
                 case GOAL:  cell.setFillColor(sf::Color::Red); break;
-                default: break; // Added a default case for completeness
+                default: break; 
             }
             cell.setPosition(sf::Vector2f(static_cast<float>(x * tileSize), static_cast<float>(y * tileSize)));
             window.draw(cell);
@@ -161,7 +150,6 @@ void MapEditor::render() {
 
 void MapEditor::saveMap(const std::string& filename) {
     std::ofstream out(filename);
-    // Iterate through the grid, casting height and width to int for loop bounds comparison
     for (int y = 0; y < static_cast<int>(height); ++y) {
         for (int x = 0; x < static_cast<int>(width); ++x) {
             char c = '#';
@@ -171,7 +159,7 @@ void MapEditor::saveMap(const std::string& filename) {
                 case ROAD:  c = '.'; break;
                 case START: c = 'S'; break;
                 case GOAL:  c = 'G'; break;
-                default: break; // Added a default case for completeness
+                default: break; 
             }
             out << c;
         }

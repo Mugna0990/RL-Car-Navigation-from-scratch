@@ -22,11 +22,8 @@ Game::Game() : car(-1, -1), gameOver(false) {
     movementFile.open("/Users/matteomugnai/Desktop/RL/assets/movements.txt");
     if (!movementFile.is_open()) {
         std::cerr << "Failed to open movement file: " << "/Users/matteomugnai/Desktop/RL/assets/movements.txt" << std::endl;
-        // Handle error - maybe set a flag or set gameOver = true
-        // The render method should check if the file is open before writing
     } else {
         std::cout << "Movement file opened successfully: " << "/Users/matteomugnai/Desktop/RL/assets/movements.txt" << std::endl;
-        // Optionally write a header to the file
     }
 }
 

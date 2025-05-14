@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <SFML/Graphics.hpp> // Include for sf::RenderWindow and sf::Color/Vector2u/Vector2i/RectangleShape/Event etc.
+#include <SFML/Graphics.hpp> 
 #include <string>
 #include "../Utils.h"
 
@@ -15,7 +15,7 @@ private:
     void render();
     void saveMap(const std::string& filename);
     void setTile(int x, int y, TileType type);
-    void printLegend(); // Declaration for the printLegend function
+    void printLegend(); 
 
     unsigned int width, height, tileSize;
     sf::RenderWindow window;
@@ -23,12 +23,10 @@ private:
     TileType currentDrawType = ROAD;
     bool isDrawing = false;
 
-    // Variables to track start and goal positions and if they've been placed
     bool startPlaced = false;
     int startX = -1, startY = -1;
     bool goalPlaced = false;
     int goalX = -1, goalY = -1;
 
-    // Legend texts stored as strings (as used in the .cpp)
     std::vector<std::string> legendTexts;
 };

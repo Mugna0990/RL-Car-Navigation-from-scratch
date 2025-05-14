@@ -14,7 +14,7 @@ public:
     double alpha; // Learning rate 
     double beta_one; // Exponential decay rate for the first moment estimates
     double beta_two; // Exponential decay rate for the second moment estimates
-    double epsilon_stable; // Small constant for numerical stability
+    double epsilon_stable; 
 
     int training_steps; // Number of optimization steps taken
     double beta_one_power; // beta_one raised to the power of training_steps
@@ -37,8 +37,7 @@ public:
 
     AdamOptimizer(const AdamOptimizer& other) = default;
     AdamOptimizer& operator=(const AdamOptimizer& other) = default;
-
-    // Perform one optimization step
+    
     void optimize(std::vector<std::vector<double>>& layer_weights, std::vector<double>& layer_biases,
                          const std::vector<std::vector<double>>& weight_gradients, const std::vector<double>& bias_gradients);
 

@@ -14,21 +14,37 @@ enum class Action {
 
 class State {
 public:
-    int x; // Position X
-    int y; // Position Y
+    int x; // position X
+    int y; // position Y
     Direction direction; // 0-3
     int speed; // 1–5
+    int distU; // up distance car-wall
+    int distR; // right distance car-wall
+    int distD; // down distance car-wall
+    int distL; // left distance car-wall
 
-    State(int x, int y, Direction dir, int spd)
-        : x(x), y(y), direction(dir), speed(spd) {}
+    State(int x, int y, Direction dir, int spd, int distU = 0, int distR = 0, int distD = 0, int distL = 0)
+    : x(x), y(y), direction(dir), speed(spd), distU(distU), distR(distR), distD(distD), distL(distL) {}
 
-    std::vector<double> toVector() const {
+
+
+      std::vector<double> toVector() const {
         double normX = static_cast<double>(x) / MAP_WIDTH;
         double normY = static_cast<double>(y) / MAP_HEIGHT;
         double normDirection = static_cast<double>(static_cast<int>(direction)) / 3.0;
         double normSpeed = static_cast<double>(speed - 1) / 4.0;
-        return {normX, normY, normDirection, normSpeed};
+    
+       // Normalize distances to walls to range [0, 1]
+       // I do not want to divide for map dimension because it would cause to have always small values
+        double normDistU = std::min(0.99, static_cast<double>(distU) / 15);
+        double normDistR = std::min(0.99, static_cast<double>(distR) / 15);
+        double normDistD = std::min(0.99, static_cast<double>(distD) / 15);
+        double normDistL = std::min(0.99, static_cast<double>(distL) / 15);
+    
+        return {normX, normY, normDirection, normSpeed, normDistU, normDistR, normDistD, normDistL};
     }
+    
+
 
     static State fromVector(const std::vector<double>& vec, int maxX, int maxY) {
         if (vec.size() != 4) throw std::invalid_argument("State vector must have 4 elements.");

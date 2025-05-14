@@ -3,13 +3,31 @@
 #include "game/Map.h"
 #include "game/Car.h"
 #include "game/Game.h"
+#include <unordered_set>
 #include <iostream>
 #include <fstream>
-#include <filesystem> // Make sure this is included for std::filesystem
+#include <filesystem> 
+#include <functional> 
+
+struct pair_hash {
+    std::size_t operator()(const std::pair<int, int>& p) const {
+        return std::hash<int>()(p.first) ^ (std::hash<int>()(p.second) << 1);
+    }
+};
 
 void displayTrackWithMovement(const std::string& trackFilePath, const std::string& movementFilePath);
 
 void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
+
+    std::vector<std::pair<int, int>> freeCells;
+    for (int y = 0; y < MAP_HEIGHT; ++y) {
+        for (int x = 0; x < MAP_WIDTH; ++x) {
+            if (map.getTile(x, y) != '#' && map.getTile(x, y) != 'G') {
+                freeCells.emplace_back(x, y);
+            }
+        }
+    }
+    
     if (!std::filesystem::exists(save_path)) {
         if (std::filesystem::create_directories(save_path)) {
             std::cout << "Created save directory: " << save_path << std::endl;
@@ -19,26 +37,22 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
         }
     }
 
-    // Open the movement log file
+    // movement log file
     std::ofstream movementFile("/Users/matteomugnai/Desktop/RL/assets/movements.txt", std::ios::app);
     if (!movementFile.is_open()) {
         std::cerr << "❌ Failed to open movements.txt\n";
         return;
     }
 
-    // Open the reward log file
+    // reward log file
     std::ofstream rewardFile("/Users/matteomugnai/Desktop/RL/assets/episode_rewards.txt", std::ios::app);
     if (!rewardFile.is_open()) {
         std::cerr << "❌ Failed to open episode_rewards.txt\n";
         movementFile.close(); // Close movements file if it's open
         return;
     }
-    // Write header if the file is new or empty (optional, good for clarity)
-    if (rewardFile.tellp() == 0) {
-        rewardFile << "Episode,Reward\n";
-    }
 
-    // New file to record episode and distance
+    // episode and distance
     std::ofstream distanceFile("/Users/matteomugnai/Desktop/RL/assets/episode_distance.txt", std::ios::app);
     if (!distanceFile.is_open()) {
         std::cerr << "❌ Failed to open episode_distance.txt\n";
@@ -66,10 +80,16 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
     int maxSteps = prevDist * 2;
 
     int save_frequency = 1000;
+    int random_start_frequency = 2;
+    int display_movements_frequency = 35000;
+    int save_movements_frequency = 500;
 
     for (int episode = 0; episode < episodes; ++episode) {
-        // Optionally log every 100th episode for tracking movements
-        if (episode > 0 && episode % 3000 == 0) {
+
+        std::vector<std::pair<int, int>> episodeMovements;
+
+        
+        if (episode > 0 && episode % display_movements_frequency == 0) {
             if (movementFile.is_open()) movementFile.close();
             displayTrackWithMovement("/Users/matteomugnai/Desktop/RL/assets/track.txt", "/Users/matteomugnai/Desktop/RL/assets/movements.txt");
             movementFile.open("/Users/matteomugnai/Desktop/RL/assets/movements.txt", std::ios::app);
@@ -77,48 +97,97 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
                 std::cerr << "❌ Failed to re-open training_movements.txt after display\n";
             }
         }
+        int carStartX = startX;
+        int carStartY = startY;
 
-        Car car(startX, startY);
+        // Choose a new random position every 10 episodes (but not every 200)
+        if (episode % random_start_frequency == 0 && episode % save_movements_frequency != 0) {
+            if (!freeCells.empty()) {
+                static std::random_device rd;
+                static std::mt19937 gen(rd());
+                std::uniform_int_distribution<> dis(0, freeCells.size() - 1);
+
+                auto randomCell = freeCells[dis(gen)];
+                carStartX = randomCell.first;
+                carStartY = randomCell.second;
+
+            }
+        }
+
+        // Now instantiate the car once, in one place
+        Car car(carStartX, carStartY);
+
+       
         prevDist = car.minDotsToGoal(map);
         bool done = false;
         double episodeReward = 0.0;
 
-        bool logThisEpisode = (episode % 200 == 0); // Log car movements for every 100th episode
+        bool logThisEpisode = (episode % save_movements_frequency == 0); 
+        std::unordered_set<std::pair<int, int>, pair_hash> visited;
 
         for (int step = 0; step < maxSteps && !done; ++step) {
-            if (logThisEpisode && movementFile.is_open()) {
-                movementFile << car.getX() << " " << car.getY() << "\n";
+
+            episodeMovements.emplace_back(car.getX(), car.getY());
+
+            int x = car.getX();
+            int y = car.getY();
+
+            // Compute distances to wall in four directions
+            int distU = 0, distR = 0, distD = 0, distL = 0;
+
+            // UP
+            for (int i = y - 1; i >= 0; --i) {
+                if (map.getTile(x, i) == '#') break;
+                distU++;
             }
 
-            State currentState(car.getX(), car.getY(), car.getDirection(), car.getVelocity());
+            // RIGHT
+            for (int i = x + 1; i < MAP_WIDTH; ++i) {
+                if (map.getTile(i, y) == '#') break;
+                distR++;
+            }
+
+            // DOWN
+            for (int i = y + 1; i < MAP_HEIGHT; ++i) {
+                if (map.getTile(x, i) == '#') break;
+                distD++;
+            }
+
+            // LEFT
+            for (int i = x - 1; i >= 0; --i) {
+                if (map.getTile(i, y) == '#') break;
+                distL++;
+            }
+
+            // Create current state with distances
+            State currentState(x, y, car.getDirection(), car.getVelocity());
+            currentState.distU = distU;
+            currentState.distR = distR;
+            currentState.distD = distD;
+            currentState.distL = distL;
             int action = agent.select_action(currentState);
-            Direction currentDir = car.getDirection();
 
             switch (action) {
-                case 0: // UP
-                    if (currentDir == DOWN) car.decelerate();
-                    else car.setDirection(static_cast<Direction>(UP));
+                case 0: car.accelerate(); break;
+                case 1: car.decelerate(); break;
+                case 2:
+                    if (car.getDirection() == RIGHT) car.decelerate();
+                    else car.setDirection(LEFT);
                     break;
-                case 1: // RIGHT
-                    if (currentDir == LEFT) car.decelerate();
-                    else car.setDirection(static_cast<Direction>(RIGHT));
+                case 3:
+                    if (car.getDirection() == LEFT) car.decelerate();
+                    else car.setDirection(RIGHT);
                     break;
-                case 2: // DOWN
-                    if (currentDir == UP) car.decelerate();
-                    else car.setDirection(static_cast<Direction>(DOWN));
+                case 4:
+                    if (car.getDirection() == DOWN) car.decelerate();
+                    else car.setDirection(UP);
                     break;
-                case 3: // LEFT
-                    if (currentDir == RIGHT) car.decelerate();
-                    else car.setDirection(static_cast<Direction>(LEFT));
-                    break;
-                case 4: // Accelerate
-                    car.accelerate();
-                    break;
-                case 5: // Decelerate
-                    car.decelerate();
+                case 5:
+                    if (car.getDirection() == UP) car.decelerate();
+                    else car.setDirection(DOWN);
                     break;
                 default:
-                    std::cerr << "Warning: Unknown action selected: " << action << std::endl;
+                    std::cerr << "Unknown action index: " << action << std::endl;
                     break;
             }
 
@@ -129,12 +198,30 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
             if (newDist != -1 && prevDist != -1) {
                 double improvement = prevDist - newDist;
                 reward += 5 * improvement;
-                if (newDist < bestDist) {
+                if (newDist < bestDist && !(episode % random_start_frequency == 0 && episode % save_movements_frequency != 0)) {
                     reward += 5 * improvement;
-                    bestDist = newDist;
                 }
             }
             reward -= 0.5; // Penalty for each step
+
+            if (visited.count({car.getX(), car.getY()})) {
+                reward -= 5.0; // Penalize loops
+            }
+            visited.insert({car.getX(), car.getY()});
+
+            bool newBestPath = (prevDist < bestDist);
+
+            if ((newDist < bestDist && !(episode % random_start_frequency == 0) )|| logThisEpisode) {
+                for (const auto& pos : episodeMovements) {
+                    if (movementFile.is_open()) {
+                        movementFile << pos.first << " " << pos.second << "\n";
+                    }
+                }
+            }
+
+            if (newBestPath) {
+                bestDist = prevDist;
+            }
 
             prevDist = newDist;
 
@@ -238,11 +325,11 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
 
 
 int main() {
-    std::vector<int> layerSizes = {4, 128, 128, 6};
+    std::vector<int> layerSizes = {8, 128, 128, 6};
     size_t buffer_capacity = 100000;
     double initial_epsilon = 1.0;
-    double epsilon_decay = 0.9997;
-    double min_epsilon = 0.05;
+    double epsilon_decay = 0.9999;
+    double min_epsilon = 0.1;
     double discount_factor = 0.97;
     int num_actions = 6;
     std::string save_directory = "/Users/matteomugnai/Desktop/RL/trained_agent";

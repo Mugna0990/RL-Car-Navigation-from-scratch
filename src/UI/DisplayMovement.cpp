@@ -6,9 +6,9 @@
 #include <vector>
 #include <string>
 
-const int TILE_SIZE = 3; // Adjust as needed
+const int TILE_SIZE = 3; // Adjust to fix the display
 
-// Function to load the track from a file
+// load track
 std::vector<std::string> loadTrack(const std::string& filePath, int& width, int& height) {
     std::vector<std::string> track;
     std::ifstream file(filePath);
@@ -24,8 +24,7 @@ std::vector<std::string> loadTrack(const std::string& filePath, int& width, int&
                 if (width == 0) {
                     width = line.length();
                 } else if (static_cast<int>(line.length()) != width) {
-                    // Handle inconsistent line lengths if necessary
-                    std::cerr << "Warning: Inconsistent line length in track file.\n";
+                    std::cerr << "Inconsistent line length in track file.\n";
                 }
                 height++;
             }
@@ -39,7 +38,7 @@ std::vector<std::string> loadTrack(const std::string& filePath, int& width, int&
     return track;
 }
 
-// Function to load movement coordinates from a file
+// load movement coordinates from file
 std::vector<std::pair<int, int>> loadMovement(const std::string& filePath) {
     std::vector<std::pair<int, int>> movement;
     std::ifstream file(filePath);
@@ -58,7 +57,7 @@ std::vector<std::pair<int, int>> loadMovement(const std::string& filePath) {
     return movement;
 }
 
-// Function to display the track and movement using SFML
+// display the track and movement using SFML
 void displayTrackWithMovement(const std::string& trackFilePath, const std::string& movementFilePath) {
     int trackWidth = 0;
     int trackHeight = 0;
@@ -82,25 +81,23 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
             if (event->is<sf::Event::Closed>()) {
                 window.close();
             }
-            // Add other event handling (like keyboard input if needed) here
         }
 
-        // Clear the window
         window.clear(sf::Color::Black); // Background color
 
         // Draw the track grid
         sf::RectangleShape tile(sf::Vector2f(TILE_SIZE, TILE_SIZE));
         for (int y = 0; y < trackHeight; ++y) {
             for (int x = 0; x < trackWidth; ++x) {
-                char cellChar = track[y][x]; // Assuming track is indexed [row][column]
+                char cellChar = track[y][x]; 
 
                 sf::Color tileColor;
                 switch (cellChar) {
                     case '#': tileColor = sf::Color(100, 100, 100); break; // Wall (Dark Grey)
                     case '.': tileColor = sf::Color(50, 50, 50); break;   // Path (Grey)
                     case 'S': tileColor = sf::Color::Green; break;      // Start (Green)
-                    case 'G': tileColor = sf::Color::Blue; break;        // Goal (Red)
-                    default:  tileColor = sf::Color::Black; break;      // Empty/Unknown (Black)
+                    case 'G': tileColor = sf::Color::Blue; break;        // Goal (Blue)
+                    default:  tileColor = sf::Color::Black; break;      // Empty (Black)
                 }
 
                 tile.setFillColor(tileColor);
@@ -109,27 +106,23 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
             }
         }
 
-        // Draw the movement path (blue points)
+        // Draw the movement path (red points)
         sf::CircleShape movementPoint(TILE_SIZE / 1.5f); // Smaller circle for the point
-        movementPoint.setFillColor(sf::Color::Red);     // Blue color for movement
+        movementPoint.setFillColor(sf::Color::Red);    
         static int startDelayCounter = 0;
-        // Adjust the number of frames for the delay (e.g., 60 frames/sec * 2 sec = 120 frames)
+        // number of frames for the delay 
         const int startDelayFrames = 60 * 2; 
 
         if (startDelayCounter < startDelayFrames) {
             startDelayCounter++;
-        } else {
-            // --- Place the existing code for drawing the single blue square here ---
-            // Draw the movement path (blue points)
-            sf::CircleShape movementPoint(TILE_SIZE / 1.5f); // Smaller circle for the point
-            movementPoint.setFillColor(sf::Color::Red);     // Blue color for movement
+        } else {     
 
             static int currentMovementIndex = 0;
             static int frameCounter = 0;
-            const int framesPerStep = 1; // Adjust to control speed
+            const int framesPerStep = 1; 
 
             if (!movement.empty()) {
-                // Calculate position in pixels, centering the circle in the cell
+                // calculate position in pixels, centering the circle in the cell
                 float pixelX = movement[currentMovementIndex].first * TILE_SIZE + (TILE_SIZE - movementPoint.getRadius() * 2) / 2.0f;
                 float pixelY = movement[currentMovementIndex].second * TILE_SIZE + (TILE_SIZE - movementPoint.getRadius() * 2) / 2.0f;
 
@@ -145,10 +138,8 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
                     frameCounter = 0;
                 }
             }
-            // --- End of the code for drawing the single blue square ---
         }
 
-        // Display the drawn content
         window.display();
     }
 }

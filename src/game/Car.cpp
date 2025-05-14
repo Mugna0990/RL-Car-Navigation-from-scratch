@@ -4,7 +4,7 @@
 Car::Car(int startX, int startY) : x(startX), y(startY), velocity(1), dir(UP) {}
 
 void Car::accelerate() {
-    velocity = std::min(velocity + 1, 5); // Max speed 5
+    velocity = std::min(velocity + 1, 5); // speed range 1 - 5
 }
 
 void Car::turnLeft() {
@@ -18,7 +18,7 @@ void Car::turnRight() {
 bool Car::checkCollision(const Map& map, int nextX, int nextY) {
     char tile = map.getTile(nextX, nextY);
     if (tile == '#') {
-        return true;  // Wall collision
+        return true; 
     }
     return false;
 }
@@ -71,10 +71,9 @@ int Car::minDotsToGoal(const Map& map) {
     const int rows = MAP_HEIGHT, cols = MAP_WIDTH;
     int gX = -1, gY = -1;
 
-    // Try to find 'G'
     map.find('G', gX, gY);
-    std::pair<int, int> goal = {gY, gX}; // row = y, col = x
-    std::queue<std::tuple<int, int, int>> q;  // row, col, dot count
+    std::pair<int, int> goal = {gY, gX}; 
+    std::queue<std::tuple<int, int, int>> q;  
     std::vector<std::vector<bool>> visited(rows, std::vector<bool>(cols, false));
     q.push({y, x, 0});
     visited[y][x] = true;
@@ -94,7 +93,7 @@ int Car::minDotsToGoal(const Map& map) {
             int nc = c + dc[d];
 
             if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !visited[nr][nc]) {
-                char tile = map.getTile(nc, nr);  // Remember: x = col, y = row
+                char tile = map.getTile(nc, nr); 
                 if (tile == '.' || tile == 'G') {
                     visited[nr][nc] = true;
                     int newDots = dots + (tile == '.' ? 1 : 0);

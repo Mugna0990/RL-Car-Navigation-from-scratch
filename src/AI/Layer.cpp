@@ -16,7 +16,6 @@ Layer::Layer(int n_in, int n_out, int idx, bool isOut) {
 
     optimizer = AdamOptimizer(n_inputs, n_outputs, 0.9, 0.999, 1e-8, 0.001, layer_idx);
 
-    //He weight initialization
     std::random_device rd;
     std::default_random_engine generator(rd());
     std::normal_distribution<double> distribution(0, sqrt(2/(double)n_inputs));
@@ -26,25 +25,24 @@ Layer::Layer(int n_in, int n_out, int idx, bool isOut) {
         weights[i].resize(n_outputs);
         grad_weights[i].resize(n_outputs);
         for(int j = 0; j < n_outputs; j++) {
-            //Initialize random weights
             weights[i][j] = distribution(generator);
         }
     }
 }
 
 Layer::Layer(const Layer& other)
-    : weights(other.weights),          // first declared
-      biases(other.biases),            // second declared
-      grad_weights(other.grad_weights),// third declared
-      grad_biases(other.grad_biases),  // fourth declared
-      optimizer(other.optimizer),       // fifth declared
-      n_inputs(other.n_inputs),        // sixth declared
-      n_outputs(other.n_outputs),      // seventh declared
-      layer_idx(other.layer_idx),      // eighth declared
-      isOut(other.isOut),              // ninth declared
-      input(other.input),              // tenth declared
-      output(other.output),            // eleventh declared
-      node_values(other.node_values)   // twelfth declared
+    : weights(other.weights),          
+      biases(other.biases),            
+      grad_weights(other.grad_weights),
+      grad_biases(other.grad_biases),  
+      optimizer(other.optimizer),       
+      n_inputs(other.n_inputs),        
+      n_outputs(other.n_outputs),      
+      layer_idx(other.layer_idx),      
+      isOut(other.isOut),              
+      input(other.input),              
+      output(other.output),            
+      node_values(other.node_values)   
 {}
 
 
@@ -69,7 +67,6 @@ Layer& Layer::operator=(const Layer& other) {
 }
 
 
-// Clone method
 Layer Layer::clone() const {
     return Layer(*this);
 }
@@ -229,7 +226,7 @@ std::vector<double>& Layer::outputLayerNodeValues(double lossDerivative, int act
 
 
     } else {
-        std::cerr << "Warning: Invalid action index in outputLayerNodeValues: " << action << std::endl;
+        std::cerr << "Invalid action index in outputLayerNodeValues: " << action << std::endl;
     }
     return node_values;
 }
@@ -249,15 +246,14 @@ std::vector<double>& Layer::hiddenLayerNodeValues(const Layer& nextLayer, const 
         node_values[i] = sum * activationDerivatives[i]; // Apply activation derivative
     }
 
-    for (int i = 0; i < n_outputs; ++i) { // Iterate over neurons in the current layer (output side of this layer)
+    for (int i = 0; i < n_outputs; ++i) { 
         grad_biases[i] += node_values[i]; // Accumulate bias gradient
 
-        for (int j = 0; j < n_inputs; ++j) { // Iterate over inputs to this layer
-            // Accumulate weight gradient: input_to_this_neuron * error_signal_for_this_neuron
+        for (int j = 0; j < n_inputs; ++j) { 
+            // Accumulate weight gradient
             grad_weights[j][i] += input[j] * node_values[i];
         }
     }
-    // **ADDITION END**
 
     return node_values;
 }

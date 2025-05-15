@@ -47,23 +47,32 @@ The project is organized into a `src` directory with several subdirectories:
 
 The RL agent is trained in the `train` function within `game_main.cpp`:
 
-**Episodic Training:** 
-    * **Episode Start:**
-        * The car is reset. Its starting position is the default 'S' on the map, or, periodically a random free cell is chosen to encourage broader exploration.
-    * **Step-by-Step Interaction:** 
-        * **State Perception:** The current `State` of the car is constructed, including its position, direction, speed, distances to walls in four cardinal                directions and distance from goal using BFS.
-        * **Action Selection:** The `Agent` selects an `action` using its epsilon-greedy policy based on the `currentState`.
-        * **Action Execution & Environment Update:** The chosen action is translated into car controls.
-        * **Reward Calculation:** A `reward` is computed:
+**Episodic Training:**
+* **Episode Start:**
+    * The car is reset.
+    * Its starting position is the default 'S' on the map, or, periodically a random free cell is chosen to encourage broader exploration.
+* **Step-by-Step Interaction:**
+    * **State Perception:**
+        * The current `State` of the car is constructed, including:
+            * Its position.
+            * Direction.
+            * Speed.
+            * Distances to walls in four cardinal directions.
+            * Distance from goal using BFS.
+    * **Action Selection:**
+        * The `Agent` selects an `action` using its epsilon-greedy policy based on the `currentState`.
+    * **Action Execution & Environment Update:**
+        * The chosen action is translated into car controls.
+    * **Reward Calculation:**
+        * A `reward` is computed:
             * `+5 * improvement` for reducing `minDotsToGoal`.
             * Additional `+3 * improvement` if a new best distance is achieved (under certain conditions).
             * `-1` penalty for each step taken (encourages efficiency).
             * `-5.0` penalty for visiting an already visited cell in the current episode (discourages loops).
             * `+500.0` for reaching the GOAL.
             * `-100.0` for a COLLISION.
-        * **Experience Replay:** The `agent.experience_replay` method is called to sample experiences and train the Q-network.
-
-  
+    * **Experience Replay:**
+        * The `agent.experience_replay` method is called to sample experiences and train the Q-network.
 ## Results
 
 Due to hardware limitations, the training was performed on a relatively simple map that required fewer than 10,000 episodes to converge. Although this environment is less complex than real-world scenarios, it effectively demonstrated the functionality and learning capability of the agent.

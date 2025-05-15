@@ -43,106 +43,6 @@ The project is organized into a `src` directory with several subdirectories:
 * `trained_agent/` 
     * Subdirectories for saved model weights and optimizer states.
 
-## Core Components
-
-### Agent
-
-* Initializes and manages the main Q-network and the target Q-network.
-* Selects actions using an epsilon-greedy strategy: random action (exploration),or action with the highest Q-value predicted (exploitation).
-* Stores experiences (state, action, reward, next state, done flag) into the `ReplayBuffer`.
-* Performs experience replay by sampling batches of transitions from the buffer to train the Q-network.
-* Periodically updates the weights of the target Q-network with the weights from the main Q-network.
-* Manages the exploration rate (epsilon) and its decay over time.
-
-### Neural Network
-
-* Constructs a feedforward neural network based on a vector of layer sizes.
-* Performs forward propagation to calculate Q-values for all possible actions given an input state.
-* Implements the `learn` method, which performs backpropagation. This involves:
-    * Calculating the loss between predicted Q-values and target Q-values (derived from the Bellman equation).
-    * Propagating the error signals backward through the network.
-    * Accumulating gradients for each layer.
-    * Instructing each layer to update its weights and biases using its optimizer.
-* Handles saving and loading of the entire network state.
-
-### Layer
-
-* Manages its own weights and biases, initialized using a normal distribution.
-* Computes its output during the forward pass, applying a ReLU activation function for hidden layers and a linear activation for the output layer.
-* Calculates and accumulates gradients for its weights and biases during backpropagation (`outputLayerNodeValues` for the output layer, `hiddenLayerNodeValues` for hidden layers).
-* Contains an `AdamOptimizer` instance to update its parameters.
-* Supports saving and loading its state.
-
-### Optimizer
-
-* Implements the Adam (Adaptive Moment Estimation) optimization algorithm.
-* Maintains biased first moment (mean) and second moment (uncentered variance) estimates for gradients.
-* Calculates bias-corrected moment estimates.
-* Supports saving and loading its internal state (moment estimates, training steps, power terms for betas).
-
-### Replay Buffer
-
-* A fixed-size circular buffer (implemented with `std::deque`) that stores `Transition` structs.
-* Each `Transition` captures a single step of interaction: `state`, `action`, `reward`, `nextState`, `done`.
-* Provides a `sample` method to retrieve a random batch of transitions for training the agent.
-
-### State
-
-* `x`, `y`: Car's current coordinates.
-* `direction`: Car's current orientation (UP, RIGHT, DOWN, LEFT).
-* `speed`: Car's current velocity (1-5).
-* `distU`, `distR`, `distD`, `distL`: Calculated distances from the car to the nearest wall in the up, right, down, and left directions, respectively. This is crucial for obstacle avoidance.
-* `toVector()`: Normalizes these attributes into a vector of doubles, suitable as input for the neural network. Distances to walls are capped to avoid excessively large normalized values.
-
-### Game Environment
-
-#### Game
-
-* Initializes the game by loading the `track` (map) from a file.
-* Creates a `Car` object and places it at the 'S' (start) position found on the map.
-* The `run()` method in `Game.cpp` is "manual play mode", processing character inputs ('w', 'a', 's', 'd', 'm', 'n') to control the car, rendering the state to the console, and checking for game conditions (goal or collision).
-* It also logs movements to `movements.txt` during manual play and can call `displayTrackWithMovement` upon game over.
-* In the project context (`game_main.cpp`) is primarily used to test the enviroment.
-
-#### Car
-
-* Represents the agent's avatar in the game.
-* Attributes: `x`, `y` coordinates, `velocity` (1-5), `dir` (Direction: UP, RIGHT, DOWN, LEFT).
-* Actions:
-    * `accelerate()`: Increases velocity (max 5).
-    * `decelerate()`: Decreases velocity (min 1).
-    * `setDirection(Direction)`: Changes the car's orientation.
-* `update(const Map& map)`: Moves the car based on its current direction and velocity. Checks for collisions with walls ('#') or reaching the goal ('G'). Returns an `UpdateStatus` (COLLISION, GOAL, OK).
-* `checkCollision(const Map& map, int nextX, int nextY)`: Determines if a move to `(nextX, nextY)` results in a collision.
-* `minDotsToGoal(const Map& map)`: Performs a Breadth-First Search (BFS) to find the minimum number of '.' (road) tiles to reach the 'G' (goal) tile. This is used for reward shaping in the training loop, encouraging the agent to make progress.
-
-#### Map
-
-* `loadFromFile(const std::string& filename)`: Loads the track layout from a text file.
-* `grid`: A `std::vector<std::string>` storing the map, where characters represent different tiles (e.g., '#' for wall, '.' for road, 'S' for start, 'G' for goal).
-* `getTile(int x, int y)`: Returns the character at the specified coordinates.
-* `find(char c, int& startX, int& startY)`: Locates the first occurrence of a character `c` on the map.
-* `display()` / `display(int xC, int yC)`: Renders the map to the console, optionally highlighting the car's position.
-
-### Map Editor
-
-* An SFML-based graphical tool for creating and editing game tracks.
-* Allows users to place Walls, Roads, Start (S), and Goal (G) tiles on a grid.
-* Key controls:
-    * Mouse Click: Draw selected tile type.
-    * 'S': Select Start tile.
-    * 'G': Select Goal tile.
-    * 'L': Select Road tile (draws a 5x5 square of road).
-    * 'Enter': Save the current map to `/assets/track.txt`.
-* Ensures only one Start and one Goal position are active on the map.
-
-### Movement Display
-
-* Uses SFML to visualize the game track and the car's movement path.
-* `loadTrack`: Loads the map from a file.
-* `loadMovement`: Loads a sequence of (x, y) coordinates from `movements.txt`.
-* Animates a red circle along the loaded movement path, effectively replaying the car's trajectory.
-
 ## Training Process
 
 The RL agent is trained in the `train` function within `game_main.cpp`:
@@ -159,7 +59,7 @@ The RL agent is trained in the `train` function within `game_main.cpp`:
     * **Step-by-Step Interaction:** 
         * **State Perception:** The current `State` of the car is constructed, including its position, direction, speed, and distances to walls in four cardinal directions (calculated explicitly by checking tiles).
         * **Action Selection:** The `Agent` selects an `action` using its epsilon-greedy policy based on the `currentState`.
-        * **Action Execution & Environment Update:** The chosen action is translated into car controls 
+        * **Action Execution & Environment Update:** The chosen action is translated into car controls.
         * **Reward Calculation:** A `reward` is computed:
             * `+5 * improvement` for reducing `minDotsToGoal`.
             * Additional `+5 * improvement` if a new best distance is achieved (under certain conditions).
@@ -177,6 +77,20 @@ The RL agent is trained in the `train` function within `game_main.cpp`:
         * The `target_q_network` is updated with the weights from the `q_network` every 500 episodes.
         * The Q-network and target Q-network models are saved to disk at a specified `save_frequency`.
         * Periodically (every 5000 episodes), the `displayTrackWithMovement` function is called to visualize the agent's progress using the `movements.txt` log (which is populated for episodes divisible by 200).
+
+## Results
+
+Due to hardware limitations, the training was performed on a relatively simple map that required fewer than 10,000 episodes to converge. Although this environment is less complex than real-world scenarios, it effectively demonstrated the functionality and learning capability of the Deep Q-Network agent.
+
+The agent successfully learned to navigate from the start to the goal, steadily improving its performance throughout training. This is a satisfying outcome given that the entire Deep Q-Network and training pipeline are implemented in C++ from scratch without GPU acceleration or external ML libraries and so all computations run on the CPU. This naturally limits training speed compared to GPU-accelerated frameworks but ensures broader compatibility and deeper understanding of the underlying algorithms.
+
+
+The framework is designed to support more complex maps and longer training durations as hardware resources allow, making this a strong foundation for future expansion.
+
+Below is a short video showcasing the agent's learned navigation on the training map:
+
+<img src="./play.gif" width="60%" />
+
 
 
 ## Getting Started

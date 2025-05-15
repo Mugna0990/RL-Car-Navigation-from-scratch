@@ -37,7 +37,7 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
         }
     }
 
-    std::ofstream movementFile("/Users/matteomugnai/Desktop/RL/assets/movements.txt", std::ios::app);
+    std::ofstream movementFile("/assets/movements.txt", std::ios::app);
     if (!movementFile.is_open()) {
         std::cerr << "Failed to open movements.txt\n";
         return;
@@ -65,9 +65,8 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
 
         if (episode > 0 && episode % display_movements_frequency == 0) {
             if (movementFile.is_open()) movementFile.close();
-            displayTrackWithMovement("/Users/matteomugnai/Desktop/RL/assets/track.txt",
-                                     "/Users/matteomugnai/Desktop/RL/assets/movements.txt");
-            movementFile.open("/Users/matteomugnai/Desktop/RL/assets/movements.txt", std::ios::app);
+            displayTrackWithMovement("/assets/track.txt", "/assets/movements.txt");
+            movementFile.open("/assets/movements.txt", std::ios::app);
         }
 
         int carStartX = startX;
@@ -230,7 +229,7 @@ int main() {
     double min_epsilon = 0.05;
     double discount_factor = 0.95;
     int num_actions = 6;
-    std::string save_directory = "/Users/matteomugnai/Desktop/RL/trained_agent";
+    std::string save_directory = "/trained_agent";
 
     bool load_agent = false;
     std::string load_path = save_directory + "/episode";

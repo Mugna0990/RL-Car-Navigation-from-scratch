@@ -89,7 +89,7 @@ The framework is designed to support more complex maps and longer training durat
 
 Below is a short video showcasing the agent's learned navigation on the training map:
 
-<img src="./play.gif" width="60%" />
+<img src="./assets/play.gif" width="60%" />
 
 
 

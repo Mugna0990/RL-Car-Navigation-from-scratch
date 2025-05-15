@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-const int TILE_SIZE = 3; // Adjust to fix the display
+const int TILE_SIZE = 3; // Adjust to fix the display dimension
 
 // load track
 std::vector<std::string> loadTrack(const std::string& filePath, int& width, int& height) {
@@ -72,9 +72,10 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
 
     // Create the SFML window
     sf::RenderWindow window(sf::VideoMode(sf::Vector2u( trackWidth * TILE_SIZE, trackHeight * TILE_SIZE)), "Track and Movement Display");
-    window.setFramerateLimit(60); // Limit frame rate for smoother display
+    window.setFramerateLimit(60);
 
     // Main SFML loop
+    static bool useRed = true;
     while (window.isOpen()) {
         // Process events
         while (const std::optional<sf::Event> event = window.pollEvent()) {
@@ -86,6 +87,7 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
         window.clear(sf::Color::Black); // Background color
 
         // Draw the track grid
+        
         sf::RectangleShape tile(sf::Vector2f(TILE_SIZE, TILE_SIZE));
         for (int y = 0; y < trackHeight; ++y) {
             for (int x = 0; x < trackWidth; ++x) {
@@ -106,23 +108,21 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
             }
         }
 
-        // Draw the movement path (red points)
-        sf::CircleShape movementPoint(TILE_SIZE / 1.5f); // Smaller circle for the point
-        movementPoint.setFillColor(sf::Color::Red);    
+        // Draw the movement path (red / cyan to understand when all movements have been seen)
+        sf::CircleShape movementPoint(TILE_SIZE / 1.5f); 
+        movementPoint.setFillColor(useRed ? sf::Color::Red : sf::Color(0, 255, 255)); 
+
         static int startDelayCounter = 0;
-        // number of frames for the delay 
-        const int startDelayFrames = 60 * 2; 
+        const int startDelayFrames = 60 * 2;
 
         if (startDelayCounter < startDelayFrames) {
             startDelayCounter++;
-        } else {     
-
+        } else {
             static int currentMovementIndex = 0;
             static int frameCounter = 0;
-            const int framesPerStep = 1; 
+            const int framesPerStep = 1;
 
             if (!movement.empty()) {
-                // calculate position in pixels, centering the circle in the cell
                 float pixelX = movement[currentMovementIndex].first * TILE_SIZE + (TILE_SIZE - movementPoint.getRadius() * 2) / 2.0f;
                 float pixelY = movement[currentMovementIndex].second * TILE_SIZE + (TILE_SIZE - movementPoint.getRadius() * 2) / 2.0f;
 
@@ -130,13 +130,16 @@ void displayTrackWithMovement(const std::string& trackFilePath, const std::strin
                 window.draw(movementPoint);
 
                 frameCounter++;
-                if (frameCounter >= framesPerStep) {
+            if (frameCounter >= framesPerStep) {
+                
+                if (currentMovementIndex >= static_cast<int>(movement.size()) - 1) {
+                    currentMovementIndex = 0;
+                    useRed = !useRed;  // Toggle color when cycle completes
+                } else {
                     currentMovementIndex++;
-                    if (currentMovementIndex >= static_cast<int>(movement.size())) {
-                        currentMovementIndex = 0; // Loop the movement
-                    }
-                    frameCounter = 0;
                 }
+                frameCounter = 0;
+            }
             }
         }
 

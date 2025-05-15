@@ -2,6 +2,10 @@
 #include <vector>
 #include <SFML/Graphics.hpp> 
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <optional> 
+#include <variant>  
 #include "../Utils.h"
 
 class MapEditor {

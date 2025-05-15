@@ -47,50 +47,32 @@ The project is organized into a `src` directory with several subdirectories:
 
 The RL agent is trained in the `train` function within `game_main.cpp`:
 
-1.  **Initialization:**
-    * The game map is accessed via a `Game` object.
-    * An `Agent` is instantiated with its neural networks, replay buffer, and learning parameters.
-    * Log files for movements, rewards, and distances are prepared.
-    * Free cells (non-wall, non-goal) on the map are identified for potential random starting positions.
-
-2.  **Episodic Training:** 
+**Episodic Training:** 
     * **Episode Start:**
         * The car is reset. Its starting position is the default 'S' on the map, or, periodically a random free cell is chosen to encourage broader exploration.
     * **Step-by-Step Interaction:** 
-        * **State Perception:** The current `State` of the car is constructed, including its position, direction, speed, and distances to walls in four cardinal directions (calculated explicitly by checking tiles).
+        * **State Perception:** The current `State` of the car is constructed, including its position, direction, speed, distances to walls in four cardinal                directions and distance from goal using BFS.
         * **Action Selection:** The `Agent` selects an `action` using its epsilon-greedy policy based on the `currentState`.
         * **Action Execution & Environment Update:** The chosen action is translated into car controls.
         * **Reward Calculation:** A `reward` is computed:
             * `+5 * improvement` for reducing `minDotsToGoal`.
-            * Additional `+5 * improvement` if a new best distance is achieved (under certain conditions).
-            * `-0.5` penalty for each step taken (encourages efficiency).
+            * Additional `+3 * improvement` if a new best distance is achieved (under certain conditions).
+            * `-1` penalty for each step taken (encourages efficiency).
             * `-5.0` penalty for visiting an already visited cell in the current episode (discourages loops).
-            * `+1000.0` for reaching the GOAL.
+            * `+500.0` for reaching the GOAL.
             * `-100.0` for a COLLISION.
-        * **Experience Replay:** The `agent.experience_replay(batch_size)` method is called to sample experiences and train the Q-network.
-        * `episodeReward` is accumulated.
-        * `prevDist` is updated to the new `minDotsToGoal`.
-    * **Episode End:**
-        * Episode statistics (total reward, final distance, epsilon) are printed to the console.
-        * Rewards and final distances are logged to their respective files.
-        * `epsilon` is decayed.
-        * The `target_q_network` is updated with the weights from the `q_network` every 500 episodes.
-        * The Q-network and target Q-network models are saved to disk at a specified `save_frequency`.
-        * Periodically (every 5000 episodes), the `displayTrackWithMovement` function is called to visualize the agent's progress using the `movements.txt` log (which is populated for episodes divisible by 200).
+        * **Experience Replay:** The `agent.experience_replay` method is called to sample experiences and train the Q-network.
 
+  
 ## Results
 
-Due to hardware limitations, the training was performed on a relatively simple map that required fewer than 10,000 episodes to converge. Although this environment is less complex than real-world scenarios, it effectively demonstrated the functionality and learning capability of the Deep Q-Network agent.
+Due to hardware limitations, the training was performed on a relatively simple map that required fewer than 10,000 episodes to converge. Although this environment is less complex than real-world scenarios, it effectively demonstrated the functionality and learning capability of the agent.
 
-The agent successfully learned to navigate from the start to the goal, steadily improving its performance throughout training. This is a satisfying outcome given that the entire Deep Q-Network and training pipeline are implemented in C++ from scratch without GPU acceleration or external ML libraries and so all computations run on the CPU. This naturally limits training speed compared to GPU-accelerated frameworks but ensures broader compatibility and deeper understanding of the underlying algorithms.
-
-
-The framework is designed to support more complex maps and longer training durations as hardware resources allow, making this a strong foundation for future expansion.
+The agent successfully learned to navigate from the start to the goal, steadily improving its performance throughout training. This is a satisfying outcome given that the entire Deep Q-Network and training pipeline are implemented in C++ from scratch, without GPU acceleration or external ML libraries all computations run on the CPU, this naturally limits training speed compared to GPU-accelerated frameworks.
 
 Below is a short video showcasing the agent's learned navigation on the training map:
 
 <img src="./assets/play.gif" width="60%" />
-
 
 
 ## Getting Started

@@ -1,15 +1,15 @@
-# Reinforcement Learning Agent for Autonomous Car Navigation
+# RL Agent for Autonomous Car Navigation
 
 This project implements a Reinforcement Learning (RL) agent that learns to control and navigate a car to a goal on a 2D map. **Notably, all core Artificial Intelligence components, including the Deep Q-Network, neural network layers, and the Adam optimizer, are implemented entirely from scratch in C++, without reliance on external machine learning libraries.** 
 
 
 ## Project Overview
 
-The primary goal of this project is to train an autonomous car agent to navigate a predefined track from a start ('S') position to a goal ('G') position. The agent learns through trial and error, interacting with the environment and receiving rewards or penalties based on its actions.
+The primary goal of this project is to train an autonomous car to navigate a predefined track from a start ('S') position to a goal ('G') position. The agent learns through trial and error, interacting with the environment and receiving rewards or penalties based on its actions.
 
-The agent perceives its environment using a `State` representation, which includes its position, direction, speed, and distances to nearby walls. It uses its Deep Q-Network (DQN) to approximate the optimal action-value function, guiding its decision-making process. Actions include accelerating, decelerating, and changing direction (Up, Down, Left, Right).
+The agent perceives its environment using a `State` representation, which includes its position, direction, speed, and distances to walls and goal. It uses its Deep Q-Network (DQN) to approximate the optimal action-value function. Actions include accelerating, decelerating, and changing direction (Up, Down, Left, Right).
 
-Training is facilitated by an epsilon-greedy exploration strategy and experience replay, ensuring stable and efficient learning. The project also includes a map editor for creating custom tracks and an SFML-based visualizer to display the agent's learned path.
+The project also includes a map editor for creating custom tracks and an SFML-based visualizer to display the agent's learned path.
 
 ## Project Structure
 

@@ -66,7 +66,7 @@ The RL agent is trained in the `train` function within `game_main.cpp`:
     * **Reward Calculation:**
         * A `reward` is computed:
             * `+5 * improvement` for reducing `minDotsToGoal`.
-            * Additional `+3 * improvement` if a new best distance is achieved (under certain conditions).
+            * Additional `+3 * improvement` if a new best distance is achieved.
             * `-1` penalty for each step taken (encourages efficiency).
             * `-5.0` penalty for visiting an already visited cell in the current episode (discourages loops).
             * `+500.0` for reaching the GOAL.

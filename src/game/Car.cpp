@@ -34,10 +34,10 @@ Direction Car::getDirection() {
 UpdateStatus Car::update(const Map& map) {
     int nx = x, ny = y;
     switch (dir) {
-        case UP:    ny -= velocity; break;
+        case UP: ny -= velocity; break;
         case RIGHT: nx += velocity; break;
-        case DOWN:  ny += velocity; break;
-        case LEFT:  nx -= velocity; break;
+        case DOWN: ny += velocity; break;
+        case LEFT: nx -= velocity; break;
     }
     if (checkCollision(map, nx, ny)) {
         std::cout<<"collision detected\n";
@@ -67,6 +67,7 @@ void Car::decelerate() {
     velocity = std::max(velocity - 1, 1);
 }
 
+// BFS to find distance car - goal
 int Car::minDotsToGoal(const Map& map) {
     const int rows = MAP_HEIGHT, cols = MAP_WIDTH;
     int gX = -1, gY = -1;

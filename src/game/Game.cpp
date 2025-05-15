@@ -60,10 +60,10 @@ void Game::run() {
         std::cout<<"current distance is"<<dist<<std::endl;
         UpdateStatus status = car.update(track);
         if (status == UpdateStatus::GOAL) {
-            std::cout << "🏁 You reached the goal!\n";
+            std::cout << "You reached the goal!\n";
             gameOver = true;
         } else if (status == UpdateStatus::COLLISION) {
-            std::cout << "💥 You crashed into a wall!\n";
+            std::cout << "You crashed into a wall!\n";
             gameOver = true;
         }
 

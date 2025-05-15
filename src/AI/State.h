@@ -22,11 +22,12 @@ public:
     int distR; // right distance car-wall
     int distD; // down distance car-wall
     int distL; // left distance car-wall
+    int distG; // distance from goal
 
-    State(int x, int y, Direction dir, int spd, int distU = 0, int distR = 0, int distD = 0, int distL = 0)
-    : x(x), y(y), direction(dir), speed(spd), distU(distU), distR(distR), distD(distD), distL(distL) {}
-
-
+    State(int x, int y, Direction dir, int spd,
+        int distU = 0, int distR = 0, int distD = 0, int distL = 0, int distG = 0)
+      : x(x), y(y), direction(dir), speed(spd),
+        distU(distU), distR(distR), distD(distD), distL(distL), distG(distG) {}
 
       std::vector<double> toVector() const {
         double normX = static_cast<double>(x) / MAP_WIDTH;
@@ -34,14 +35,14 @@ public:
         double normDirection = static_cast<double>(static_cast<int>(direction)) / 3.0;
         double normSpeed = static_cast<double>(speed - 1) / 4.0;
     
-       // Normalize distances to walls to range [0, 1]
-       // I do not want to divide for map dimension because it would cause to have always small values
+       // Normalize distances to range [0, 1]
         double normDistU = std::min(1.00, static_cast<double>(distU) / 15);
         double normDistR = std::min(1.00, static_cast<double>(distR) / 15);
         double normDistD = std::min(1.00, static_cast<double>(distD) / 15);
         double normDistL = std::min(1.00, static_cast<double>(distL) / 15);
+        double normDistG = std::min(1.00, static_cast<double>(distG) / std::max(MAP_HEIGHT, MAP_WIDTH));
     
-        return {normX, normY, normDirection, normSpeed, normDistU, normDistR, normDistD, normDistL};
+        return {normX, normY, normDirection, normSpeed, normDistU, normDistR, normDistD, normDistL, normDistG};
     }
     
 

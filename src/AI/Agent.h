@@ -87,7 +87,6 @@ public:
         if (!training_batch.empty()) {
             q_network.learn(training_batch);
         }
-
         
     }
 

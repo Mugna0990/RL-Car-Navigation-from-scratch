@@ -45,7 +45,7 @@ Layer::Layer(const Layer& other)
       node_values(other.node_values)   
 {}
 
-
+//  copy operator for target network
 Layer& Layer::operator=(const Layer& other) {
     if (this != &other) {
         weights = other.weights;
@@ -65,12 +65,6 @@ Layer& Layer::operator=(const Layer& other) {
     }
     return *this;
 }
-
-
-Layer Layer::clone() const {
-    return Layer(*this);
-}
-
 
 std::vector<double> Layer::forward(const std::vector<double>& in) {
             
@@ -150,7 +144,6 @@ void Layer::load(const std::string& path) {
         }
     }
 
-    // Read biases
     if (!std::getline(inFile, line)) {
         std::cerr << "Error: Missing biases line in file." << std::endl;
         return;

@@ -1,16 +1,11 @@
 #include "MapEditor.h"
-#include <SFML/Graphics.hpp>
-#include <fstream>
-#include <iostream>
-#include <optional> 
-#include <variant>  
 
 MapEditor::MapEditor(unsigned int w, unsigned int h, unsigned tSize)
     : width(w), height(h), tileSize(tSize),
       window(sf::VideoMode(sf::Vector2u(w * tSize, h * tSize), 32U), "Track Editor"),
       grid(h, std::vector<TileType>(w, WALL))  // Initialize grid with WALLs by default
 {
-    // Set up legend text
+    // legend text
     legendTexts.push_back("S: Set Start");
     legendTexts.push_back("G: Set Goal");
     legendTexts.push_back("L: Set Road (5x5 square)");
@@ -35,7 +30,6 @@ void MapEditor::run() {
 }
 
 void MapEditor::processEvents() {
-    // Keeping your original event polling style with std::optional and getIf
     while (const std::optional<sf::Event> event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
             window.close();

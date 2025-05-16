@@ -1,6 +1,6 @@
-# RL Car Navigation from scratch
+# RL Car Navigation from Scratch
 
-This project implements a Reinforcement Learning (RL) agent that learns to control and navigat a car. **Notably, all core Artificial Intelligence components, including the Deep Q-Network, neural network layers, and the Adam optimizer, are implemented entirely from scratch in C++, without reliance on external machine learning libraries.** 
+This project implements a Reinforcement Learning (RL) agent that learns to control and navigate a car. **Notably, all core Artificial Intelligence components, including the Deep Q-Network, neural network layers, and the Adam optimizer, are implemented entirely from scratch in C++, without reliance on external machine learning libraries.** 
 
 
 ## Project Overview
@@ -20,8 +20,8 @@ The project is organized into a `src` directory with several subdirectories:
     * `game_main.cpp`: Main entry point for training the RL agent.
     * `visualize.cpp`: Main entry point for the Movement Visualizer.
     * `AI/`
-        * `Agent.h`RL logic, including action selection and learning from experience using the NN.
-        * `NeuralNetwork.h` / `NeuralNetwork.cpp`: Implements the neural network*.
+        * `Agent.h`: RL logic, including action selection and learning from experience using the NN.
+        * `NeuralNetwork.h` / `NeuralNetwork.cpp`: Implements the neural network.
         * `Layer.h` / `Layer.cpp`: Defines individual neural network layers.
         * `Optimizer.h` / `Optimizer.cpp`: Implements the Adam optimizer.
         * `ReplayBuffer.h`: Provides the experience replay buffer.

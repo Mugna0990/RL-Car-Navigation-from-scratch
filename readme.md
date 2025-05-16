@@ -44,8 +44,14 @@ The project is organized into a `src` directory with several subdirectories:
     * Subdirectories for saved model weights and optimizer states.
 
 ## Training Process
+  
+The network is trained using the Adam optimizer.  
+The architecture of the Deep Q-Network is as follows:
 
-The RL agent is trained in the `train` function within `game_main.cpp`:
+- 9 input features representing the current state  
+- hidden layer with 128 neurons  
+- hidden layer with 128 neurons  
+- An output layer with 6 neurons
 
 **Episodic Training:**
 * **Episode Start:**

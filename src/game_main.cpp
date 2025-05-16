@@ -56,7 +56,7 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
 
     int save_frequency = 5000;
     int random_start_frequency = 5;
-    int display_movements_frequency = 15000;
+    int display_movements_frequency = 3000;
     int save_movements_frequency = 1000;
     int bestDist = MAP_HEIGHT * MAP_WIDTH;
 

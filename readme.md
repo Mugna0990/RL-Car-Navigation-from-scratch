@@ -1,4 +1,4 @@
-# RL Agent for Autonomous Car Navigation
+# RL Car Navigation from scratch
 
 This project implements a Reinforcement Learning (RL) agent that learns to control and navigat a car. **Notably, all core Artificial Intelligence components, including the Deep Q-Network, neural network layers, and the Adam optimizer, are implemented entirely from scratch in C++, without reliance on external machine learning libraries.** 
 

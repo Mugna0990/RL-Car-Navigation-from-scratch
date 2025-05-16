@@ -66,7 +66,7 @@ void AdamOptimizer::save(const std::string& file_path) const {
     std::ofstream outFile(file_path + "/layer" + std::to_string(layer_identifier) + "_adam_state.txt");
 
     if (!outFile) {
-        std::cerr << "Error: Could not open file " << file_path << "/layer" << layer_identifier << "_adam_state.txt for writing." << std::endl;
+        std::cerr << "Could not open file " << file_path << "/layer" << layer_identifier << "_adam_state.txt for writing." << std::endl;
         return;
     }
 
@@ -109,7 +109,7 @@ void AdamOptimizer::load(const std::string& file_path) {
     std::ifstream inFile(file_path + "/layer" + std::to_string(layer_identifier) + "_adam_state.txt");
 
     if (!inFile) {
-        std::cerr << "Error: Could not open file " << file_path << "/layer" << layer_identifier << "_adam_state.txt for reading. Initializing new Adam configuration..." << std::endl;
+        std::cerr << "Could not open file " << file_path << "/layer" << layer_identifier << "_adam_state.txt for reading. Initializing new Adam configuration..." << std::endl;
         return;
     }
 

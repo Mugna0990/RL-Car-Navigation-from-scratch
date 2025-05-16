@@ -6,7 +6,7 @@
 
 Game::Game() : car(-1, -1), gameOver(false) {
     std::cout << "Loading track...\n";
-    if (!track.loadFromFile("/assets/track.txt")) {
+    if (!track.loadFromFile("./assets/track.txt")) {
         std::cerr << "Failed to load track.\n";
         return;
     }
@@ -19,11 +19,11 @@ Game::Game() : car(-1, -1), gameOver(false) {
     } else {
         std::cerr << "Start position 'S' not found on map.\n";
     }
-    movementFile.open("/assets/movements.txt");
+    movementFile.open("./assets/movements.txt");
     if (!movementFile.is_open()) {
-        std::cerr << "Failed to open movement file: " << "/assets/movements.txt" << std::endl;
+        std::cerr << "Failed to open movement file: " << "./assets/movements.txt" << std::endl;
     } else {
-        std::cout << "Movement file opened successfully: " << "/assets/movements.txt" << std::endl;
+        std::cout << "Movement file opened successfully: " << "./assets/movements.txt" << std::endl;
     }
 }
 
@@ -76,5 +76,5 @@ void Game::run() {
     }
 
     std::cout << "Game over. Displaying track and movement...\n";
-    displayTrackWithMovement("/assets/track.txt", "/assets/movements.txt");
+    displayTrackWithMovement("./assets/track.txt", "./assets/movements.txt");
 }

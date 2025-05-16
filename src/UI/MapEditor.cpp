@@ -51,7 +51,7 @@ void MapEditor::processEvents() {
                 currentDrawType = EMPTY;
             }
             else if (keyPressed->code == sf::Keyboard::Key::Enter) {
-                saveMap("/Users/matteomugnai/Desktop/RL/assets/track.txt");
+                saveMap("./assets/track.txt");
             }
         }
     }

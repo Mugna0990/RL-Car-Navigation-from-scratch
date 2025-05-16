@@ -37,7 +37,7 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
         }
     }
 
-    std::ofstream movementFile("/assets/movements.txt", std::ios::app);
+    std::ofstream movementFile("./assets/movements.txt", std::ios::app);
     if (!movementFile.is_open()) {
         std::cerr << "Failed to open movements.txt\n";
         return;
@@ -65,8 +65,8 @@ void train(Agent& agent, Map& map, int episodes, const std::string& save_path) {
 
         if (episode > 0 && episode % display_movements_frequency == 0) {
             if (movementFile.is_open()) movementFile.close();
-            displayTrackWithMovement("/assets/track.txt", "/assets/movements.txt");
-            movementFile.open("/assets/movements.txt", std::ios::app);
+            displayTrackWithMovement("./assets/track.txt", "./assets/movements.txt");
+            movementFile.open("./assets/movements.txt", std::ios::app);
         }
 
         int carStartX = startX;

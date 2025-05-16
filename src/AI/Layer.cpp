@@ -94,7 +94,7 @@ void Layer::save(const std::string& path) {
     std::ofstream outFile(path + "/layer" + std::to_string(layer_idx) + ".txt");
 
     if (!outFile.is_open()) {
-        std::cerr << "Error: Could not open file for saving: " << path << "/layer" << layer_idx << ".txt" << std::endl;
+        std::cerr << "Could not open file for saving: " << path << "/layer" << layer_idx << ".txt" << std::endl;
         return;
     }
 
@@ -122,7 +122,7 @@ void Layer::load(const std::string& path) {
     std::ifstream inFile(path + "/layer" + std::to_string(layer_idx) + ".txt");
 
     if (!inFile.is_open()) {
-        std::cerr << "Error: Could not open file for loading: " << path << "/layer" << layer_idx << ".txt" << std::endl;
+        std::cerr << "Could not open file for loading: " << path << "/layer" << layer_idx << ".txt" << std::endl;
         return;
     }
 

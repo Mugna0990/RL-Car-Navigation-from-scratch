@@ -229,7 +229,7 @@ int main() {
     double min_epsilon = 0.05;
     double discount_factor = 0.95;
     int num_actions = 6;
-    std::string save_directory = "/trained_agent";
+    std::string save_directory = "./trained_agent";
 
     bool load_agent = false;
     std::string load_path = save_directory + "/episode";
